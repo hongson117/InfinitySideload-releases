@@ -156,17 +156,17 @@ jobs:
           xcodebuild -project SIContainer.xcodeproj -scheme SIContainerRunner1 -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/runner1-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/runner1-build.log | tail -n 20 || true; echo 'Runner1 build failed.'; exit 1; }
           xcodebuild -project SIContainer.xcodeproj -scheme SIContainerRunner2 -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/runner2-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/runner2-build.log | tail -n 20 || true; echo 'Runner2 build failed.'; exit 1; }
           xcodebuild -project SIContainer.xcodeproj -scheme SIContainer -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/app-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/app-build.log | tail -n 20 || true; echo 'Main app build failed.'; exit 1; }
-      - name: Package and audit SIContainer, SIContainerRunner1, and SIContainerRunner2 binaries
+      - name: Package and audit Sideload, SideloadRunner1, and SideloadRunner2 binaries
         run: |
           mkdir -p out-runner1/Payload out-runner2/Payload out/Payload publish
           R1_APP=build/Build/Products/Release-iphoneos/SIContainerRunner1.app
           /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$R1_APP/Info.plist"
           cp -R "$R1_APP" out-runner1/Payload/
-          (cd out-runner1 && zip -qry ../publish/SIContainerRunner1.ipa Payload)
+          (cd out-runner1 && zip -qry ../publish/SideloadRunner1.ipa Payload)
           R2_APP=build/Build/Products/Release-iphoneos/SIContainerRunner2.app
           /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$R2_APP/Info.plist"
           cp -R "$R2_APP" out-runner2/Payload/
-          (cd out-runner2 && zip -qry ../publish/SIContainerRunner2.ipa Payload)
+          (cd out-runner2 && zip -qry ../publish/SideloadRunner2.ipa Payload)
           APP=build/Build/Products/Release-iphoneos/SIContainer.app
           WIDGET_APPEX=build/Build/Products/Release-iphoneos/SIContainerWidget.appex
           if [[ -d "$WIDGET_APPEX" && ! -d "$APP/PlugIns/SIContainerWidget.appex" ]]; then
@@ -177,15 +177,15 @@ jobs:
           xcrun strip -x "$APP/PlugIns/SIContainerWidget.appex/SIContainerWidget"
           /usr/libexec/PlistBuddy -c "Add :ISLGitSHA string ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist"
           /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/Info.plist"
-          cp publish/SIContainerRunner1.ipa "$APP/SIContainerRunner1.ipa"
-          cp publish/SIContainerRunner2.ipa "$APP/SIContainerRunner2.ipa"
+          cp publish/SideloadRunner1.ipa "$APP/SideloadRunner1.ipa"
+          cp publish/SideloadRunner2.ipa "$APP/SideloadRunner2.ipa"
           cp -R "$APP" out/Payload/
-          (cd out && zip -qry ../publish/SIContainer.ipa Payload)
+          (cd out && zip -qry ../publish/Sideload.ipa Payload)
           python3 scripts/audit_release.py --self-test >/tmp/audit-test.log 2>&1
-          python3 scripts/audit_release.py publish/SIContainer.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/recipient-audit.json >/tmp/audit.log 2>&1
-          python3 scripts/audit_release.py publish/SIContainerRunner1.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner1-audit.json >/tmp/audit-r1.log 2>&1
-          python3 scripts/audit_release.py publish/SIContainerRunner2.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner2-audit.json >/tmp/audit-r2.log 2>&1
-          (cd publish && shasum -a 256 SIContainer.ipa SIContainerRunner1.ipa SIContainerRunner2.ipa > SHA256SUMS.txt)
+          python3 scripts/audit_release.py publish/Sideload.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/recipient-audit.json >/tmp/audit.log 2>&1
+          python3 scripts/audit_release.py publish/SideloadRunner1.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner1-audit.json >/tmp/audit-r1.log 2>&1
+          python3 scripts/audit_release.py publish/SideloadRunner2.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner2-audit.json >/tmp/audit-r2.log 2>&1
+          (cd publish && shasum -a 256 Sideload.ipa SideloadRunner1.ipa SideloadRunner2.ipa > SHA256SUMS.txt)
           python3 - <<'PY'
           import os,json,pathlib,plistlib
           info=plistlib.loads(pathlib.Path('out/Payload/SIContainer.app/Info.plist').read_bytes())
@@ -197,7 +197,7 @@ jobs:
           pathlib.Path('publish/BUILD-SOURCE.json').write_text(json.dumps({
               'source_commit':os.environ['SOURCE_SHA'],
               'build':str(info['CFBundleVersion']),
-              'product':'SIContainer',
+              'product':'InfinitySideload',
               'bundle_id':info['CFBundleIdentifier'],
               'runner1_bundle_id':r1_info['CFBundleIdentifier'],
               'runner2_bundle_id':r2_info['CFBundleIdentifier'],
@@ -208,13 +208,13 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: SIContainer-public-${{ env.BUILD_NUMBER }}
+          name: Sideload-public-${{ env.BUILD_NUMBER }}
           retention-days: 3
           if-no-files-found: error
           path: |
-            publish/SIContainer.ipa
-            publish/SIContainerRunner1.ipa
-            publish/SIContainerRunner2.ipa
+            publish/Sideload.ipa
+            publish/SideloadRunner1.ipa
+            publish/SideloadRunner2.ipa
             publish/SHA256SUMS.txt
             publish/recipient-audit.json
             publish/runner1-audit.json
@@ -234,10 +234,10 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          pattern: SIContainer-public-*
+          pattern: Sideload-public-*
           path: release-files
           merge-multiple: true
-      - name: Publish SIContainer, SIContainerRunner1, and SIContainerRunner2 IPAs
+      - name: Publish Sideload, SideloadRunner1, and SideloadRunner2 IPAs
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/publish_sicontainer.py release-files

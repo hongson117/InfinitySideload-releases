@@ -1,12 +1,12 @@
-"""Publish audited unsigned SIContainer + SIContainerRunner1 + SIContainerRunner2 code; never accepts user signing data."""
+"""Publish audited unsigned Sideload + SideloadRunner1 + SideloadRunner2 code; never accepts user signing data."""
 import base64, hashlib, json, os, pathlib, subprocess, sys, urllib.request, zipfile, plistlib
 
 repo = os.environ["GITHUB_REPOSITORY"]
 assert repo in ("hongson117/InfinitySideload-releases", "hongson117/iSideload-releases")
 root = pathlib.Path(sys.argv[1])
-ipa = root / "SIContainer.ipa"
-r1_ipa = root / "SIContainerRunner1.ipa"
-r2_ipa = root / "SIContainerRunner2.ipa"
+ipa = root / "Sideload.ipa"
+r1_ipa = root / "SideloadRunner1.ipa"
+r2_ipa = root / "SideloadRunner2.ipa"
 
 
 def command(*args):
@@ -48,7 +48,7 @@ assert r2_info["CFBundleIdentifier"] == "com.hongson117.sicontainer.runner2"
 assert r2_info["CFBundleShortVersionString"] == meta["version"] and str(r2_info["CFBundleVersion"]) == meta["build"]
 assert r2_info["ISLGitSHA"] == meta["source_commit"][:7]
 
-tag = f"sicontainer-v{meta['version']}-b{meta['build']}"
+tag = f"v{meta['version']}-b{meta['build']}"
 notes = root / "release-notes.md"
 notes.write_text(
     f"""∞Sideload {meta['version']} · Build {meta['build']} (Adaptive 2–3 Containers Zero-Config · VI/EN)
@@ -58,7 +58,7 @@ notes.write_text(
 - Kiến trúc tự động thích ứng 2–3 Container (`∞Sideload` Chính + `∞Sideload 1` + `∞Sideload 2`) hoàn toàn tự động (Zero-Config).
 - Tự động nhận diện và bảo vệ ứng dụng phát nhạc/âm thanh nền + Ghim giữ phát nền thủ công (Pin).
 
-IPA chưa ký (`SIContainer.ipa` đã kèm sẵn `SIContainerRunner1.ipa` và `SIContainerRunner2.ipa` bên trong để tự động cài đặt).
+IPA chưa ký (`Sideload.ipa` đã kèm sẵn `SideloadRunner1.ipa` và `SideloadRunner2.ipa` bên trong để tự động cài đặt).
 """,
     encoding="utf-8",
 )
@@ -89,9 +89,9 @@ if not exists:
         "--notes-file",
         str(notes),
     )
-url = f"https://github.com/{repo}/releases/download/{tag}/SIContainer.ipa"
-r1_url = f"https://github.com/{repo}/releases/download/{tag}/SIContainerRunner1.ipa"
-r2_url = f"https://github.com/{repo}/releases/download/{tag}/SIContainerRunner2.ipa"
+url = f"https://github.com/{repo}/releases/download/{tag}/Sideload.ipa"
+r1_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner1.ipa"
+r2_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner2.ipa"
 with urllib.request.urlopen(url, timeout=120) as response:
     assert hashlib.file_digest(response, "sha256").hexdigest() == sha
 with urllib.request.urlopen(r1_url, timeout=120) as response:

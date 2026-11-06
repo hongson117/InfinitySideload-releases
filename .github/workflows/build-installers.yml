@@ -7,9 +7,9 @@ on:
         required: false
         default: 'feat/sicontainer'
       release_tag:
-        description: Release tag in hongson117/InfinitySideload-releases to bundle SIContainer.ipa from
+        description: Release tag in hongson117/InfinitySideload-releases to bundle Sideload.ipa from
         required: false
-        default: 'sicontainer-v0.1.0-b1028'
+        default: 'v0.1.0-b1031'
       publish_release:
         description: Upload isl-windows.zip & isl-macos-universal.zip to the release and repo
         type: boolean
@@ -24,7 +24,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     env:
-      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,13 +63,13 @@ jobs:
           Copy-Item windows/target/release/isl-cli.exe,windows/Cai-iSideload.bat,windows/Kiem-tra-goi.ps1 -Destination $package
           Copy-Item windows/README.md -Destination (Join-Path $package 'HUONG-DAN.md')
           $baseUrl = "https://github.com/hongson117/InfinitySideload-releases/releases/download/$($env:RELEASE_TAG)"
-          Invoke-WebRequest "$baseUrl/SIContainer.ipa" -OutFile (Join-Path $package 'SIContainer.ipa')
+          Invoke-WebRequest "$baseUrl/Sideload.ipa" -OutFile (Join-Path $package 'Sideload.ipa')
           $sumsText = (Invoke-WebRequest "$baseUrl/SHA256SUMS.txt" -UseBasicParsing).Content
           if ($sumsText -is [byte[]]) { $sumsText = [Text.Encoding]::UTF8.GetString($sumsText) }
-          $expectedLine = ($sumsText -split "`r?`n" | Where-Object { $_ -match '\s+SIContainer\.ipa$' } | Select-Object -First 1)
-          if (-not $expectedLine) { throw 'Missing SIContainer.ipa entry in release SHA256SUMS.txt' }
+          $expectedLine = ($sumsText -split "`r?`n" | Where-Object { $_ -match '\s+Sideload\.ipa$' } | Select-Object -First 1)
+          if (-not $expectedLine) { throw 'Missing Sideload.ipa entry in release SHA256SUMS.txt' }
           $expectedSha = ($expectedLine -split '\s+')[0].ToLower()
-          if ((Get-FileHash (Join-Path $package 'SIContainer.ipa') -Algorithm SHA256).Hash.ToLower() -ne $expectedSha) { throw 'Unexpected SIContainer.ipa checksum' }
+          if ((Get-FileHash (Join-Path $package 'Sideload.ipa') -Algorithm SHA256).Hash.ToLower() -ne $expectedSha) { throw 'Unexpected Sideload.ipa checksum' }
           python scripts/generate_notices.py --manifest-path windows/Cargo.toml --platform x86_64-pc-windows-msvc --output (Join-Path $package 'ThirdPartyNotices.txt')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $rows = Get-ChildItem -LiteralPath $package -File | Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower(),$_.Name }
@@ -92,7 +92,7 @@ jobs:
     timeout-minutes: 35
     env:
       MACOSX_DEPLOYMENT_TARGET: '11.0'
-      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -142,11 +142,11 @@ jobs:
           chmod 755 out/iSideload-macOS/Cai-iSideload.command out/iSideload-macOS/isl-mac
           bash -n out/iSideload-macOS/Cai-iSideload.command
           BASE_URL="https://github.com/hongson117/InfinitySideload-releases/releases/download/${RELEASE_TAG}"
-          curl --fail --location --retry 3 "${BASE_URL}/SIContainer.ipa" -o out/iSideload-macOS/SIContainer.ipa
-          EXPECTED_SHA=$(curl --fail --location --retry 3 "${BASE_URL}/SHA256SUMS.txt" | awk '/SIContainer\.ipa$/ {print $1}')
-          echo "${EXPECTED_SHA}  out/iSideload-macOS/SIContainer.ipa" | shasum -a 256 -c -
+          curl --fail --location --retry 3 "${BASE_URL}/Sideload.ipa" -o out/iSideload-macOS/Sideload.ipa
+          EXPECTED_SHA=$(curl --fail --location --retry 3 "${BASE_URL}/SHA256SUMS.txt" | awk '/Sideload\.ipa$/ {print $1}')
+          echo "${EXPECTED_SHA}  out/iSideload-macOS/Sideload.ipa" | shasum -a 256 -c -
           python3 scripts/generate_notices.py --manifest-path macos/Cargo.toml --platform aarch64-apple-darwin --output out/iSideload-macOS/ThirdPartyNotices.txt
-          (cd out/iSideload-macOS && shasum -a 256 isl-mac SIContainer.ipa Cai-iSideload.command README-VI.txt ThirdPartyNotices.txt > SHA256SUMS.txt && shasum -a 256 -c SHA256SUMS.txt)
+          (cd out/iSideload-macOS && shasum -a 256 isl-mac Sideload.ipa Cai-iSideload.command README-VI.txt ThirdPartyNotices.txt > SHA256SUMS.txt && shasum -a 256 -c SHA256SUMS.txt)
           ditto -c -k --keepParent out/iSideload-macOS isl-macos-universal.zip
           shasum -a 256 isl-macos-universal.zip > SHA256SUMS-macos.txt
       - uses: actions/upload-artifact@v4
@@ -165,7 +165,7 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
