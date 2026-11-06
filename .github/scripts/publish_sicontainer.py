@@ -2,7 +2,7 @@
 import base64, hashlib, json, os, pathlib, subprocess, sys, urllib.request, zipfile, plistlib
 
 repo = os.environ["GITHUB_REPOSITORY"]
-assert repo == "hongson117/iSideload-releases"
+assert repo in ("hongson117/InfinitySideload-releases", "hongson117/iSideload-releases")
 root = pathlib.Path(sys.argv[1])
 ipa = root / "SIContainer.ipa"
 r1_ipa = root / "SIContainerRunner1.ipa"
@@ -51,12 +51,12 @@ assert r2_info["ISLGitSHA"] == meta["source_commit"][:7]
 tag = f"sicontainer-v{meta['version']}-b{meta['build']}"
 notes = root / "release-notes.md"
 notes.write_text(
-    f"""SIContainer {meta['version']} · build {meta['build']} (Adaptive 2–3 Containers Zero-Config)
+    f"""∞Sideload {meta['version']} · Build {meta['build']} (Adaptive 2–3 Containers Zero-Config · VI/EN)
 
-- Kiến trúc tự động thích ứng 2–3 Container (`SIContainer` Chính + `SIContainer Phụ 1` + `SIContainer Phụ 2`) hoàn toàn tự động (Zero-Config).
-- Khi có đủ Phụ 1 & Phụ 2: Con Chính (`SIContainer`) 100% thuần Quản lý/Thư viện, trong khi Phụ 1 & Phụ 2 chạy song song 2 ứng dụng khách trong RAM với chuyển đổi 0-bounce và vuốt App Switcher tức thì.
-- Khi chỉ có Phụ 1: Tự động chạy ứng dụng trên Phụ 1 và chỉ mượn Con Chính khi Phụ 1 đang giữ ứng dụng phát âm thanh nền.
-- Tự động nhận diện và bảo vệ ứng dụng phát nhạc/âm thanh nền (`UIBackgroundModes: audio`) mà không cần cấu hình thủ công.
+- Hỗ trợ đầy đủ song ngữ Tiếng Việt & Tiếng Anh (VI/EN) cho cả ứng dụng, Widget và bộ cài USB Windows/macOS.
+- Bật mục "Cài cho iPhone khác" (Install on Another iPhone) trực tiếp trong tab Cài đặt và mục Thiết bị & Ghép đôi.
+- Kiến trúc tự động thích ứng 2–3 Container (`∞Sideload` Chính + `∞Sideload 1` + `∞Sideload 2`) hoàn toàn tự động (Zero-Config).
+- Tự động nhận diện và bảo vệ ứng dụng phát nhạc/âm thanh nền + Ghim giữ phát nền thủ công (Pin).
 
 IPA chưa ký (`SIContainer.ipa` đã kèm sẵn `SIContainerRunner1.ipa` và `SIContainerRunner2.ipa` bên trong để tự động cài đặt).
 """,
@@ -85,7 +85,7 @@ if not exists:
         repo,
         "--prerelease",
         "--title",
-        f"SIContainer {meta['version']} build {meta['build']}",
+        f"∞Sideload {meta['version']} · Build {meta['build']}",
         "--notes-file",
         str(notes),
     )
@@ -119,7 +119,7 @@ for attempt in range(3):
     request.write_text(
         json.dumps(
             {
-                "message": f"Publish SIContainer {meta['version']} build {meta['build']} update",
+                "message": f"Publish ∞Sideload {meta['version']} build {meta['build']} update",
                 "sha": current["sha"],
                 "content": base64.b64encode(content).decode(),
             }
