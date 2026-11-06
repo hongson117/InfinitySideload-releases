@@ -1,0 +1,13 @@
+*.ipa
+*.zip
+*.bundle
+*.p12
+*.pfx
+*.plist
+.env
+*secret*
+*token*
+
+# Only these reviewed binary installer archives are public in the repository.
+!/isl-windows.zip
+!/isl-macos-universal.zip

@@ -1,0 +1,243 @@
+name: Build SIContainer
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Approved private source commit (40 hex characters)
+        required: false
+      build_number:
+        description: Increasing iPhone app build number
+        required: false
+        default: ''
+      publish_release:
+        description: Publish the verified binaries as a release
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: public-sicontainer-build
+  cancel-in-progress: false
+jobs:
+  shortcut-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: node --test .github/scripts/test_shortcut.cjs
+  core-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - name: Validate build request
+        run: |
+          if [[ -n "$SOURCE_SHA" ]]; then [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; fi
+          if [[ -z "$BUILD_NUMBER" ]]; then BUILD_NUMBER=$((1000 + GITHUB_RUN_NUMBER)); fi
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - name: Record source identity
+        run: echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test private core without publishing source diagnostics
+        run: |
+          if cargo test --locked --manifest-path core/Cargo.toml >/tmp/core-tests.log 2>&1; then
+            echo 'Core regression tests passed.'
+          else
+            echo 'Core regression tests failed; private diagnostics were not uploaded.'
+            exit 1
+          fi
+  ios:
+    runs-on: macos-15-intel
+    timeout-minutes: 45
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - name: Validate build request
+        run: |
+          if [[ -n "$SOURCE_SHA" ]]; then [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; fi
+          if [[ -z "$BUILD_NUMBER" ]]; then BUILD_NUMBER=$((1000 + GITHUB_RUN_NUMBER)); fi
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - name: Record source identity
+        run: echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+      - name: Build private signing core
+        run: |
+          export IPHONEOS_DEPLOYMENT_TARGET=17.0
+          export ISL_GIT_SHA=${SOURCE_SHA:0:7}
+          export RUSTFLAGS="--remap-path-prefix=${GITHUB_WORKSPACE}=/src --remap-path-prefix=${HOME}/.cargo=/deps/cargo"
+          cargo build --locked --release --target aarch64-apple-ios --manifest-path core/Cargo.toml >/tmp/core-build.log 2>&1 || { echo 'Core build failed; private diagnostics were not uploaded.'; exit 1; }
+      - name: Test app policies and generate SIContainer project
+        run: |
+          (
+            set -e
+            swiftc -parse-as-library ios/iSideload/Core/SelfSigningIdentity.swift tests/SelfSigningIdentityTests.swift -o /tmp/identity-tests
+            /tmp/identity-tests
+            swiftc -parse-as-library ios/iSideload/Core/PeerSigningChoice.swift tests/PeerSigningChoiceTests.swift -o /tmp/choice-tests
+            /tmp/choice-tests
+            swiftc -parse-as-library ios/iSideload/Core/AppUpdate.swift tests/AppUpdateTests.swift -o /tmp/update-tests
+            /tmp/update-tests
+            swiftc -parse-as-library ios/iSideload/Core/CoreInteractionPolicy.swift tests/CoreInteractionPolicyTests.swift -o /tmp/interaction-tests
+            /tmp/interaction-tests
+            swiftc -parse-as-library ios/iSideload/Core/Models.swift ios/iSideload/Core/InstalledAppState.swift tests/InstalledAppStateTests.swift -o /tmp/lifecycle-tests
+            /tmp/lifecycle-tests
+            swiftc -parse-as-library ios/iSideload/Core/PairingRecord.swift tests/PairingRecordTests.swift -o /tmp/pair-tests
+            /tmp/pair-tests
+            swiftc -parse-as-library ios/iSideload/Core/Models.swift ios/iSideload/Core/LiveContainerSigning.swift tests/LiveContainerSigningTests.swift -o /tmp/lc-tests
+            /tmp/lc-tests
+            swiftc -parse-as-library ios/iContainer/ContainerGuest.swift tests/ContainerGuestTests.swift -o /tmp/guest-tests
+            /tmp/guest-tests
+            if [[ -f tests/SIShortcutTests.swift ]]; then
+              swiftc -parse-as-library ios/iContainer/SIShortcut.swift tests/SIShortcutTests.swift -o /tmp/shortcut-tests
+              /tmp/shortcut-tests
+            fi
+            if [[ -f tests/SILunarCalendarTests.swift ]]; then
+              swiftc -parse-as-library ios/SIContainerWidget/SILunarCalendar.swift tests/SILunarCalendarTests.swift -o /tmp/lunar-tests
+              /tmp/lunar-tests
+              SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+              xcrun --sdk iphoneos clang -target arm64-apple-ios17.0 -isysroot "$SDK" -fobjc-arc -fapplication-extension -fsyntax-only ios/SIContainerWidget/SIWidgetRuntime.m
+              xcrun --sdk iphoneos swiftc -target arm64-apple-ios17.0 -isysroot "$SDK" -import-objc-header ios/SIContainerWidget/BridgingHeader.h -parse-as-library -typecheck ios/SIContainerWidget/SILunarCalendar.swift ios/SIContainerWidget/SIContainerWidget.swift
+            fi
+            if [[ -f tests/SICURLInterceptionTests.m ]]; then
+              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICURLInterception.m tests/SICURLInterceptionTests.m -o /tmp/url-interception-tests
+              /tmp/url-interception-tests
+            fi
+            if [[ -f tests/SIWidgetBridgeTests.m ]]; then
+              clang -fobjc-arc -fblocks -framework Foundation -framework JavaScriptCore -framework ImageIO -framework CoreGraphics ios/SIContainerWidget/SIWidgetRuntime.m tests/SIWidgetBridgeTests.m -o /tmp/widget-bridge-tests
+              /tmp/widget-bridge-tests
+            fi
+            python3 -m venv /tmp/ic-python
+            /tmp/ic-python/bin/python -m pip install --quiet pyyaml
+            EXPECTED_VERSION=$(/tmp/ic-python/bin/python -c "import yaml; print(yaml.safe_load(open('project-sicontainer.yml'))['targets']['SIContainer']['settings']['base']['MARKETING_VERSION'])")
+            echo "SOURCE_VERSION=$EXPECTED_VERSION" >> "$GITHUB_ENV"
+            /tmp/ic-python/bin/python scripts/configure_sicontainer.py
+            GENERATED_VERSION=$(/tmp/ic-python/bin/python -c "import yaml; print(yaml.safe_load(open('project-sicontainer.yml'))['targets']['SIContainer']['settings']['base']['MARKETING_VERSION'])")
+            [[ "$EXPECTED_VERSION" == "$GENERATED_VERSION" ]]
+            python3 scripts/generate_notices.py
+            brew install xcodegen
+            xcodegen generate --spec project-sicontainer.yml
+          ) >/tmp/app-tests.log 2>&1 || { echo 'App checks failed; private diagnostics were not uploaded.'; exit 1; }
+          echo 'App policy tests passed.'
+      - name: Verify real iOS Mach-O RPATH transformation
+        run: |
+          (
+            set -e
+            SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+            xcrun clang -target arm64-apple-ios17.0 -isysroot "$SDK" -fobjc-arc -framework UIKit -framework Foundation -framework CoreGraphics -Wl,-headerpad,4096 -Wl,-rpath,@executable_path/Frameworks -Wl,-rpath,@loader_path/Frameworks tests/ContainerDemo/main.m -o /tmp/ContainerDemo
+            rustc --edition=2021 scripts/verify_container_demo.rs -o /tmp/verify-demo
+            /tmp/verify-demo /tmp/ContainerDemo /tmp/ContainerDemo.dylib
+            xcrun otool -hv /tmp/ContainerDemo.dylib
+          ) >/tmp/macho-smoke.log 2>&1 || { echo 'Native Mach-O preparation check failed; private diagnostics were not uploaded.'; exit 1; }
+      - name: Build unsigned SIContainerRunner1, SIContainerRunner2, and SIContainer
+        run: |
+          xcodebuild -project SIContainer.xcodeproj -scheme SIContainerRunner1 -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/runner1-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/runner1-build.log | tail -n 20 || true; echo 'Runner1 build failed.'; exit 1; }
+          xcodebuild -project SIContainer.xcodeproj -scheme SIContainerRunner2 -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/runner2-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/runner2-build.log | tail -n 20 || true; echo 'Runner2 build failed.'; exit 1; }
+          xcodebuild -project SIContainer.xcodeproj -scheme SIContainer -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build >/tmp/app-build.log 2>&1 || { grep -E "error:|xcodebuild:" /tmp/app-build.log | tail -n 20 || true; echo 'Main app build failed.'; exit 1; }
+      - name: Package and audit SIContainer, SIContainerRunner1, and SIContainerRunner2 binaries
+        run: |
+          mkdir -p out-runner1/Payload out-runner2/Payload out/Payload publish
+          R1_APP=build/Build/Products/Release-iphoneos/SIContainerRunner1.app
+          /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$R1_APP/Info.plist"
+          cp -R "$R1_APP" out-runner1/Payload/
+          (cd out-runner1 && zip -qry ../publish/SIContainerRunner1.ipa Payload)
+          R2_APP=build/Build/Products/Release-iphoneos/SIContainerRunner2.app
+          /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$R2_APP/Info.plist"
+          cp -R "$R2_APP" out-runner2/Payload/
+          (cd out-runner2 && zip -qry ../publish/SIContainerRunner2.ipa Payload)
+          APP=build/Build/Products/Release-iphoneos/SIContainer.app
+          WIDGET_APPEX=build/Build/Products/Release-iphoneos/SIContainerWidget.appex
+          if [[ -d "$WIDGET_APPEX" && ! -d "$APP/PlugIns/SIContainerWidget.appex" ]]; then
+            mkdir -p "$APP/PlugIns"
+            cp -R "$WIDGET_APPEX" "$APP/PlugIns/SIContainerWidget.appex"
+          fi
+          test -f "$APP/PlugIns/SIContainerWidget.appex/SIContainerWidget"
+          xcrun strip -x "$APP/PlugIns/SIContainerWidget.appex/SIContainerWidget"
+          /usr/libexec/PlistBuddy -c "Add :ISLGitSHA string ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/Info.plist"
+          cp publish/SIContainerRunner1.ipa "$APP/SIContainerRunner1.ipa"
+          cp publish/SIContainerRunner2.ipa "$APP/SIContainerRunner2.ipa"
+          cp -R "$APP" out/Payload/
+          (cd out && zip -qry ../publish/SIContainer.ipa Payload)
+          python3 scripts/audit_release.py --self-test >/tmp/audit-test.log 2>&1
+          python3 scripts/audit_release.py publish/SIContainer.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/recipient-audit.json >/tmp/audit.log 2>&1
+          python3 scripts/audit_release.py publish/SIContainerRunner1.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner1-audit.json >/tmp/audit-r1.log 2>&1
+          python3 scripts/audit_release.py publish/SIContainerRunner2.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner2-audit.json >/tmp/audit-r2.log 2>&1
+          (cd publish && shasum -a 256 SIContainer.ipa SIContainerRunner1.ipa SIContainerRunner2.ipa > SHA256SUMS.txt)
+          python3 - <<'PY'
+          import os,json,pathlib,plistlib
+          info=plistlib.loads(pathlib.Path('out/Payload/SIContainer.app/Info.plist').read_bytes())
+          r1_info=plistlib.loads(pathlib.Path('out-runner1/Payload/SIContainerRunner1.app/Info.plist').read_bytes())
+          r2_info=plistlib.loads(pathlib.Path('out-runner2/Payload/SIContainerRunner2.app/Info.plist').read_bytes())
+          assert info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Packaged version differs from committed target'
+          assert r1_info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Runner1 version differs from committed target'
+          assert r2_info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Runner2 version differs from committed target'
+          pathlib.Path('publish/BUILD-SOURCE.json').write_text(json.dumps({
+              'source_commit':os.environ['SOURCE_SHA'],
+              'build':str(info['CFBundleVersion']),
+              'product':'SIContainer',
+              'bundle_id':info['CFBundleIdentifier'],
+              'runner1_bundle_id':r1_info['CFBundleIdentifier'],
+              'runner2_bundle_id':r2_info['CFBundleIdentifier'],
+              'version':info['CFBundleShortVersionString'],
+              'unsigned':True
+          }))
+          pathlib.Path('publish/ThirdPartyNotices.txt').write_bytes(pathlib.Path('out/Payload/SIContainer.app/ThirdPartyNotices.txt').read_bytes())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SIContainer-public-${{ env.BUILD_NUMBER }}
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            publish/SIContainer.ipa
+            publish/SIContainerRunner1.ipa
+            publish/SIContainerRunner2.ipa
+            publish/SHA256SUMS.txt
+            publish/recipient-audit.json
+            publish/runner1-audit.json
+            publish/runner2-audit.json
+            publish/BUILD-SOURCE.json
+            publish/ThirdPartyNotices.txt
+
+  publish:
+    if: ${{ inputs.publish_release }}
+    needs: [shortcut-tests, core-tests, ios]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: SIContainer-public-*
+          path: release-files
+          merge-multiple: true
+      - name: Publish SIContainer, SIContainerRunner1, and SIContainerRunner2 IPAs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/publish_sicontainer.py release-files

@@ -1,0 +1,215 @@
+name: Build SIContainer USB Installers (Windows & macOS)
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Source commit or branch in hongson117/InfinitySideload
+        required: false
+        default: 'feat/sicontainer'
+      release_tag:
+        description: Release tag in hongson117/InfinitySideload-releases to bundle SIContainer.ipa from
+        required: false
+        default: 'sicontainer-v0.1.0-b1028'
+      publish_release:
+        description: Upload isl-windows.zip & isl-macos-universal.zip to the release and repo
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: public-sicontainer-installers
+  cancel-in-progress: false
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: windows
+          key: windows-msvc-sicontainer
+          cache-on-failure: true
+      - name: Test transfer recovery and device selection
+        shell: pwsh
+        run: cargo test --locked --manifest-path windows/Cargo.toml
+      - name: Build native standalone Windows executable
+        shell: pwsh
+        run: |
+          $sourceSha = (git rev-parse HEAD).Trim()
+          $env:ISL_GIT_SHA = $sourceSha.Substring(0,7)
+          $env:RUSTFLAGS = "-C target-feature=+crt-static --remap-path-prefix=$env:GITHUB_WORKSPACE=/src --remap-path-prefix=$env:USERPROFILE/.cargo=/deps/cargo"
+          cargo build --locked --release --manifest-path windows/Cargo.toml
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          windows/target/release/isl-cli.exe --self-test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          windows/target/release/isl-cli.exe --help
+          windows/target/release/isl-cli.exe --version
+      - name: Package and validate Windows installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $package = New-Item -ItemType Directory -Path out/isl-windows
+          Copy-Item windows/target/release/isl-cli.exe,windows/Cai-iSideload.bat,windows/Kiem-tra-goi.ps1 -Destination $package
+          Copy-Item windows/README.md -Destination (Join-Path $package 'HUONG-DAN.md')
+          $baseUrl = "https://github.com/hongson117/InfinitySideload-releases/releases/download/$($env:RELEASE_TAG)"
+          Invoke-WebRequest "$baseUrl/SIContainer.ipa" -OutFile (Join-Path $package 'SIContainer.ipa')
+          $sumsText = (Invoke-WebRequest "$baseUrl/SHA256SUMS.txt" -UseBasicParsing).Content
+          if ($sumsText -is [byte[]]) { $sumsText = [Text.Encoding]::UTF8.GetString($sumsText) }
+          $expectedLine = ($sumsText -split "`r?`n" | Where-Object { $_ -match '\s+SIContainer\.ipa$' } | Select-Object -First 1)
+          if (-not $expectedLine) { throw 'Missing SIContainer.ipa entry in release SHA256SUMS.txt' }
+          $expectedSha = ($expectedLine -split '\s+')[0].ToLower()
+          if ((Get-FileHash (Join-Path $package 'SIContainer.ipa') -Algorithm SHA256).Hash.ToLower() -ne $expectedSha) { throw 'Unexpected SIContainer.ipa checksum' }
+          python scripts/generate_notices.py --manifest-path windows/Cargo.toml --platform x86_64-pc-windows-msvc --output (Join-Path $package 'ThirdPartyNotices.txt')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $rows = Get-ChildItem -LiteralPath $package -File | Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower(),$_.Name }
+          [IO.File]::WriteAllLines((Join-Path $package 'SHA256SUMS.txt'), $rows, [Text.UTF8Encoding]::new($false))
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $package 'Kiem-tra-goi.ps1')
+          if ($LASTEXITCODE -ne 0) { throw 'Package verification failed' }
+          Compress-Archive -LiteralPath $package.FullName -DestinationPath isl-windows.zip
+          [IO.File]::WriteAllText('SHA256SUMS-windows.txt', ((Get-FileHash isl-windows.zip -Algorithm SHA256).Hash.ToLower() + "  isl-windows.zip`n"), [Text.UTF8Encoding]::new($false))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: isl-windows-package
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            isl-windows.zip
+            SHA256SUMS-windows.txt
+
+  macos:
+    runs-on: macos-15
+    timeout-minutes: 35
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '11.0'
+      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: macos
+          key: macos-universal-sicontainer
+          cache-on-failure: true
+      - name: Test shared USB transfer and launcher
+        run: |
+          cargo test --locked --manifest-path macos/Cargo.toml
+          bash -n macos/Cai-iSideload.command
+          python3 scripts/test_macos_launcher.py
+      - name: Build Apple Silicon and Intel binaries
+        run: |
+          SOURCE_SHA=$(git rev-parse HEAD)
+          export ISL_GIT_SHA=${SOURCE_SHA:0:7}
+          export RUSTFLAGS="--remap-path-prefix=${GITHUB_WORKSPACE}=/src --remap-path-prefix=${HOME}/.cargo=/deps/cargo"
+          cargo build --locked --release --manifest-path macos/Cargo.toml --target aarch64-apple-darwin
+          cargo build --locked --release --manifest-path macos/Cargo.toml --target x86_64-apple-darwin
+      - name: Package and test Universal installer
+        run: |
+          set -euo pipefail
+          mkdir -p out/iSideload-macOS
+          lipo -create macos/target/aarch64-apple-darwin/release/isl-mac macos/target/x86_64-apple-darwin/release/isl-mac -output out/iSideload-macOS/isl-mac
+          codesign --force --sign - --timestamp=none out/iSideload-macOS/isl-mac
+          codesign --verify --strict out/iSideload-macOS/isl-mac
+          lipo out/iSideload-macOS/isl-mac -verify_arch arm64 x86_64
+          out/iSideload-macOS/isl-mac --self-test
+          out/iSideload-macOS/isl-mac --help
+          out/iSideload-macOS/isl-mac --version
+          if arch -x86_64 /usr/bin/true 2>/dev/null; then
+            arch -x86_64 out/iSideload-macOS/isl-mac --self-test
+          else
+            echo 'Intel execution unavailable on this runner; both slices verified by lipo.'
+          fi
+          cp macos/Cai-iSideload.command macos/README-VI.txt out/iSideload-macOS/
+          chmod 755 out/iSideload-macOS/Cai-iSideload.command out/iSideload-macOS/isl-mac
+          bash -n out/iSideload-macOS/Cai-iSideload.command
+          BASE_URL="https://github.com/hongson117/InfinitySideload-releases/releases/download/${RELEASE_TAG}"
+          curl --fail --location --retry 3 "${BASE_URL}/SIContainer.ipa" -o out/iSideload-macOS/SIContainer.ipa
+          EXPECTED_SHA=$(curl --fail --location --retry 3 "${BASE_URL}/SHA256SUMS.txt" | awk '/SIContainer\.ipa$/ {print $1}')
+          echo "${EXPECTED_SHA}  out/iSideload-macOS/SIContainer.ipa" | shasum -a 256 -c -
+          python3 scripts/generate_notices.py --manifest-path macos/Cargo.toml --platform aarch64-apple-darwin --output out/iSideload-macOS/ThirdPartyNotices.txt
+          (cd out/iSideload-macOS && shasum -a 256 isl-mac SIContainer.ipa Cai-iSideload.command README-VI.txt ThirdPartyNotices.txt > SHA256SUMS.txt && shasum -a 256 -c SHA256SUMS.txt)
+          ditto -c -k --keepParent out/iSideload-macOS isl-macos-universal.zip
+          shasum -a 256 isl-macos-universal.zip > SHA256SUMS-macos.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: isl-macos-package
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            isl-macos-universal.zip
+            SHA256SUMS-macos.txt
+
+  publish:
+    if: ${{ inputs.publish_release }}
+    needs: [windows, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || 'sicontainer-v0.1.0-b1028' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: isl-*-package
+          path: installer-files
+          merge-multiple: true
+      - name: Upload Windows & macOS installers to release and update repo
+        run: |
+          set -euo pipefail
+          cd installer-files
+          shasum -a 256 -c SHA256SUMS-windows.txt
+          shasum -a 256 -c SHA256SUMS-macos.txt
+          gh release upload "$RELEASE_TAG" isl-windows.zip isl-macos-universal.zip --clobber --repo "$GITHUB_REPOSITORY"
+          cd ..
+          cp installer-files/isl-windows.zip ./isl-windows.zip
+          cp installer-files/isl-macos-universal.zip ./isl-macos-universal.zip
+          shasum -a 256 isl-macos-universal.zip isl-windows.zip > SHA256SUMS.txt
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib
+          tag = os.environ["RELEASE_TAG"]
+          win_p = pathlib.Path("isl-windows.zip")
+          mac_p = pathlib.Path("isl-macos-universal.zip")
+          win_sha = hashlib.sha256(win_p.read_bytes()).hexdigest()
+          mac_sha = hashlib.sha256(mac_p.read_bytes()).hexdigest()
+          manifest_p = pathlib.Path("INSTALLERS.json")
+          if manifest_p.exists():
+              data = json.loads(manifest_p.read_text(encoding="utf-8"))
+              data["version"] = tag
+              data["packages"]["windows"]["sha256"] = win_sha
+              data["packages"]["windows"]["bytes"] = win_p.stat().st_size
+              data["packages"]["windows"]["release_url"] = f"https://github.com/hongson117/InfinitySideload-releases/releases/download/{tag}/isl-windows.zip"
+              data["packages"]["macos"]["sha256"] = mac_sha
+              data["packages"]["macos"]["bytes"] = mac_p.stat().st_size
+              data["packages"]["macos"]["release_url"] = f"https://github.com/hongson117/InfinitySideload-releases/releases/download/{tag}/isl-macos-universal.zip"
+              manifest_p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add isl-windows.zip isl-macos-universal.zip SHA256SUMS.txt INSTALLERS.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish Windows & macOS USB installers for ${RELEASE_TAG}"
+            git push origin HEAD:main
+          fi

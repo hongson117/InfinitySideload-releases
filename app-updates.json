@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "apps": {
+    "sicontainer": {
+      "version": "0.1.0",
+      "build": "1029",
+      "url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/sicontainer-v0.1.0-b1029/SIContainer.ipa",
+      "sha256": "1d01e42bd94e8dac096e1c3e46e04ddb0686610d5306d6565513f7cce454f278",
+      "bytes": 18423527
+    }
+  }
+}
