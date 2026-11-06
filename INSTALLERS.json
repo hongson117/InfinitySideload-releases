@@ -1,19 +1,19 @@
 {
-  "version": "sicontainer-v0.1.0-b1029",
+  "version": "sicontainer-v0.1.0-b1030",
   "app_version": "0.1.0",
   "app_build": "1029",
   "packages": {
     "windows": {
       "file": "isl-windows.zip",
-      "sha256": "d2cd433302248173297701fc37f8f7f5f7c20deaa47f8a746c15c02ee72fa53c",
-      "bytes": 22390528,
-      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/sicontainer-v0.1.0-b1029/isl-windows.zip"
+      "sha256": "a88288fe1166df5a726970989bfb6d7cb816a121634a154b17481877d840a6de",
+      "bytes": 22432973,
+      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/sicontainer-v0.1.0-b1030/isl-windows.zip"
     },
     "macos": {
       "file": "isl-macos-universal.zip",
-      "sha256": "1e79bf44aa1f6a5cf7d604c393948c0b85e63cd97436da9a6ede4d435e6a2fd4",
-      "bytes": 25706010,
-      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/sicontainer-v0.1.0-b1029/isl-macos-universal.zip"
+      "sha256": "964c0f10f87b52f95786ac2f8be93890d48750c0c8693cd6f52b701d63260d0a",
+      "bytes": 25748142,
+      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/sicontainer-v0.1.0-b1030/isl-macos-universal.zip"
     }
   },
   "self_update_feed": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json"
