@@ -1,13 +1,14 @@
 # ∞Sideload (InfinitySideload) — Hướng Dẫn Cài Đặt, Sử Dụng & AI Agent Playbook
 
 **Hệ thống Sideload & Đa Container tự gia hạn không cần máy tính cho iPhone/iPad (iOS/iPadOS 17.4+ & iOS 27).**  
-Hỗ trợ đầy đủ song ngữ **Tiếng Việt (`VI`)** và **Tiếng Anh (`EN`)**.
+Hỗ trợ đầy đủ song ngữ **Tiếng Việt (`VI`)** và **Tiếng Anh (`EN`)**.  
+✨ **Credit by HongSon**
 
 > **Dành cho AI Agent (Codex, Claude Code, Antigravity, Cursor, ChatGPT...):** Tài liệu này được thiết kế chuẩn **AI-Executable README**. Khi người dùng yêu cầu cài đặt, sửa lỗi ghép đôi, tạo icon màn hình chính, giữ phát nền hoặc nâng cấp **∞Sideload**, AI có thể đọc trực tiếp mục **[Phần 1: Giao Thức Thực Thi Dành Cho AI Agent](#-phần-1-giao-thức-thực-thi-dành-cho-ai-agent-ai-execution-playbook)** để tự động chạy lệnh cài đặt qua Terminal/PowerShell hoặc hướng dẫn từng bước chính xác cho người dùng.
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1032`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1033`)
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp |
 | :--- | :--- | :--- |
@@ -318,3 +319,10 @@ Nếu bạn muốn **khóa cố định** một ứng dụng quan trọng trong 
 - Nếu một file IPA bên thứ 3 gặp lỗi hoặc văng (crash) khi mở:
   - Bấm vào nút **`⋯`** của ứng dụng đó → chọn **Chẩn đoán & Sao chép thông tin IPA** (hoặc bấm **Sao chép toàn bộ Crash Log** ở đầu tab Ứng dụng).
   - Toàn bộ cấu trúc Mach-O, `LC_RPATH`, `Frameworks/`, `Info.plist` và Backtrace/Signal của lần crash gần nhất sẽ được chép sẵn vào bộ nhớ tạm (Clipboard) để bạn dán gửi trực tiếp cho AI kiểm tra.
+
+---
+
+## 🏅 Tác Giả & Ghi Công (Credits)
+
+- **Credit by HongSon** (`@hongson117`) — Thiết kế kiến trúc Đa Container (`∞Sideload` + `Phụ 1` + `Phụ 2`), đồng bộ App Group thời gian thực, tự động cập nhật & tự gia hạn chữ ký không cần máy tính.
+
