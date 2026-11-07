@@ -33,7 +33,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1035`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1036`)
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp |
 | :--- | :--- | :--- |
@@ -344,6 +344,13 @@ Nếu bạn muốn **khóa cố định** một ứng dụng quan trọng trong 
 - Nếu một file IPA bên thứ 3 gặp lỗi hoặc văng (crash) khi mở:
   - Bấm vào nút **`⋯`** của ứng dụng đó → chọn **Chẩn đoán & Sao chép thông tin IPA** (hoặc bấm **Sao chép toàn bộ Crash Log** ở đầu tab Ứng dụng).
   - Toàn bộ cấu trúc Mach-O, `LC_RPATH`, `Frameworks/`, `Info.plist` và Backtrace/Signal của lần crash gần nhất sẽ được chép sẵn vào bộ nhớ tạm (Clipboard) để bạn dán gửi trực tiếp cho AI kiểm tra.
+
+### 7. Kiến Trúc Chống Phình Dung Lượng & Dọn Dẹp Bộ Nhớ Đệm (`Clear Cache`)
+- **Dùng chung 1 bản `Prepared.app` duy nhất cho cả 3 Container:** Thay vì nhân bản theo từng slot, `∞Sideload` dùng chung duy nhất một gói `Prepared.app` cho cả `∞Sideload Chính`, `∞Sideload 1` và `∞Sideload 2`, giúp **tiết kiệm 75–80% dung lượng lưu trữ** cho mỗi ứng dụng được chuẩn bị.
+- **Tự động thu hồi tệp IPA tạm:** Ngay sau khi nhập file `.ipa` từ Tệp/Share Sheet hoặc sau khi cài đặt/gia hạn xong `SideloadRunner1.ipa`, `SideloadRunner2.ipa`, `iContainer-self.ipa`, hệ thống tự động xóa bản sao IPA tạm thời để không chiếm dụng bộ nhớ.
+- **Nút Dọn dẹp bộ nhớ đệm (`Clear Cache`):**
+  - **Dọn theo từng ứng dụng:** Bấm nút **`⋯`** bên cạnh ứng dụng → chọn **Xóa bộ nhớ đệm (Clear Cache)** để xóa sạch `Library/Caches` và `tmp` (cache video, hình ảnh, dữ liệu tạm) của riêng ứng dụng đó.
+  - **Dọn toàn bộ hệ thống:** Vào tab **Cài đặt → Dung lượng & Bộ nhớ đệm** → xem dung lượng có thể giải phóng theo thời gian thực và bấm **Dọn dẹp bộ nhớ đệm (Clear Cache)**. Toàn bộ ứng dụng đã cài, tài khoản đăng nhập, chứng chỉ, file ghép đôi và dữ liệu người dùng (`Documents`, `NSUserDefaults`) được **giữ nguyên 100%**.
 
 ---
 
