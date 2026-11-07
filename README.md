@@ -33,7 +33,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1036`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1037`)
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp |
 | :--- | :--- | :--- |
