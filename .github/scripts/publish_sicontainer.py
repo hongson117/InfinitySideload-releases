@@ -83,7 +83,7 @@ if not exists:
         *map(str, assets),
         "--repo",
         repo,
-        "--prerelease",
+        "--latest",
         "--title",
         f"∞Sideload {meta['version']} · Build {meta['build']}",
         "--notes-file",
