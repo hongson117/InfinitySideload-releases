@@ -64,14 +64,9 @@ IPA chưa ký (`Sideload.ipa` đã kèm sẵn `SideloadRunner1.ipa` và `Sideloa
 )
 assets = [
     ipa,
-    r1_ipa,
-    r2_ipa,
     root / "SHA256SUMS.txt",
     root / "ThirdPartyNotices.txt",
     root / "BUILD-SOURCE.json",
-    root / "recipient-audit.json",
-    root / "runner1-audit.json",
-    root / "runner2-audit.json",
 ]
 for extra_zip in ("isl-windows.zip", "isl-macos-universal.zip"):
     extra_path = pathlib.Path(extra_zip)
@@ -94,14 +89,8 @@ if not exists:
         str(notes),
     )
 url = f"https://github.com/{repo}/releases/download/{tag}/Sideload.ipa"
-r1_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner1.ipa"
-r2_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner2.ipa"
 with urllib.request.urlopen(url, timeout=120) as response:
     assert hashlib.file_digest(response, "sha256").hexdigest() == sha
-with urllib.request.urlopen(r1_url, timeout=120) as response:
-    assert hashlib.file_digest(response, "sha256").hexdigest() == r1_sha
-with urllib.request.urlopen(r2_url, timeout=120) as response:
-    assert hashlib.file_digest(response, "sha256").hexdigest() == r2_sha
 
 
 def order(entry):

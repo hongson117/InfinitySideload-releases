@@ -42,9 +42,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 | :--- | :--- | :--- |
 | **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
 | **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
-| **`Sideload.ipa` (∞Sideload Chính)** | Gói IPA chính (đã nhúng sẵn `SideloadRunner1.ipa` & `SideloadRunner2.ipa` bên trong) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
-| **`SideloadRunner1.ipa` (∞Sideload 1)** | Container Phụ 1 (chạy song song ứng dụng thứ 2 trong RAM) | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
-| **`SideloadRunner2.ipa` (∞Sideload 2)** | Container Phụ 2 (chạy song song ứng dụng thứ 3 trong RAM) | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
+| **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
 
 ---
