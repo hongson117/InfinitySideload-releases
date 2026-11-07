@@ -73,6 +73,10 @@ assets = [
     root / "runner1-audit.json",
     root / "runner2-audit.json",
 ]
+for extra_zip in ("isl-windows.zip", "isl-macos-universal.zip"):
+    extra_path = pathlib.Path(extra_zip)
+    if extra_path.exists():
+        assets.append(extra_path)
 exists = subprocess.run(["gh", "release", "view", tag, "--repo", repo], capture_output=True).returncode == 0
 if not exists:
     command(

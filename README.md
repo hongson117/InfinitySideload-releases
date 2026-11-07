@@ -33,12 +33,15 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1040`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1041`)
 
-| Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp |
+> 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
+> *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
+
+| Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp (Release & Mirror) |
 | :--- | :--- | :--- |
-| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
-| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
+| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload Chính)** | Gói IPA chính (đã nhúng sẵn `SideloadRunner1.ipa` & `SideloadRunner2.ipa` bên trong) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`SideloadRunner1.ipa` (∞Sideload 1)** | Container Phụ 1 (chạy song song ứng dụng thứ 2 trong RAM) | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
 | **`SideloadRunner2.ipa` (∞Sideload 2)** | Container Phụ 2 (chạy song song ứng dụng thứ 3 trong RAM) | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
@@ -78,7 +81,7 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
   mkdir -p "$WORK_DIR"
   curl -fL "https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip" -o "$WORK_DIR/isl-macos-universal.zip"
   unzip -o "$WORK_DIR/isl-macos-universal.zip" -d "$WORK_DIR"
-  cd "$WORK_DIR/isl-macos"
+  cd "$WORK_DIR/iSideload-macOS"
   xattr -cr . 2>/dev/null || true
   chmod +x Cai-iSideload.command isl-mac
   ```
@@ -149,15 +152,15 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 ### Phương Thức 2: Cài Đặt Từ MacBook / macOS (Qua Cáp USB)
 
 #### Bước 1: Chuẩn bị trên macOS (Hỗ trợ cả chip Apple Silicon M1–M4 & Intel)
-1. Tải gói **[`isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip)** và giải nén ra một thư mục (ví dụ `Downloads/isl-macos`).
+1. Tải gói **[`isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip)** và giải nén ra thư mục `Downloads` (sẽ tạo ra thư mục `iSideload-macOS`).
 2. Cắm iPhone vào máy Mac qua cáp USB, mở khóa màn hình iPhone.
 3. Mở **Finder**, chọn tên iPhone ở thanh bên trái → bấm **Trust (Tin cậy)** trên Mac và bấm **Tin cậy** trên iPhone, sau đó nhập mật mã iPhone.
 
 #### Bước 2: Mở Bộ Cài `Cai-iSideload.command`
-1. Nhấp đúp vào file **`Cai-iSideload.command`**.
+1. Nhấp đúp vào file **`Cai-iSideload.command`** bên trong thư mục `iSideload-macOS`.
    - *Mẹo xử lý nhanh nếu macOS Gatekeeper hỏi xác nhận bảo mật:* Mở **Terminal**, gõ lệnh sau rồi nhấn Enter:
      ```bash
-     xattr -cr ~/Downloads/isl-macos && open ~/Downloads/isl-macos/Cai-iSideload.command
+     xattr -cr ~/Downloads/iSideload-macOS && open ~/Downloads/iSideload-macOS/Cai-iSideload.command
      ```
      *(Hoặc vào **System Settings → Privacy & Security** → kéo xuống dưới bấm **Open Anyway**).*
 2. Trong cửa sổ Terminal hiện ra:
