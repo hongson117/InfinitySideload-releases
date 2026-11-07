@@ -1,2 +1,2 @@
-977314ff90e7c60a77e0d6cd0076724f32f45ea600f81621300cc07c1d2fc49e  isl-macos-universal.zip
-b6fcdd53fc6837b559b9653023a0100b42d008b11851f82a312d54e4b4fd9aa3  isl-windows.zip
+445f4b8f8d6652fb4cfe2901990f83ee1f6a55050554b56cd78475d96ddf80f5  isl-macos-universal.zip
+2ef968cd46fe6ee8b88b38e20fa2acab96404d8eba7d063dd059c7e93bcbed50  isl-windows.zip
