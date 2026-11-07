@@ -2,9 +2,34 @@
 
 **Hệ thống Sideload & Đa Container tự gia hạn không cần máy tính cho iPhone/iPad (iOS/iPadOS 17.4+ & iOS 27).**  
 Hỗ trợ đầy đủ song ngữ **Tiếng Việt (`VI`)** và **Tiếng Anh (`EN`)**.  
-✨ **Credit by HongSon**
+✨ **Credit by HongSon (`@hongson117`)**
+
+![∞Sideload Hero Banner](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/assets/hero-banner.jpg)
 
 > **Dành cho AI Agent (Codex, Claude Code, Antigravity, Cursor, ChatGPT...):** Tài liệu này được thiết kế chuẩn **AI-Executable README**. Khi người dùng yêu cầu cài đặt, sửa lỗi ghép đôi, tạo icon màn hình chính, giữ phát nền hoặc nâng cấp **∞Sideload**, AI có thể đọc trực tiếp mục **[Phần 1: Giao Thức Thực Thi Dành Cho AI Agent](#-phần-1-giao-thức-thực-thi-dành-cho-ai-agent-ai-execution-playbook)** để tự động chạy lệnh cài đặt qua Terminal/PowerShell hoặc hướng dẫn từng bước chính xác cho người dùng.
+
+---
+
+## ⚡ Vì Sao Chọn **∞Sideload** Thay Vì **SideStore + LiveContainer**?
+
+Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản Apple ID miễn phí trên iPhone/iPad mà không cần máy tính gia hạn mỗi 7 ngày, người dùng buộc phải ghép nối rời rạc **SideStore** (hoặc AltStore) với **LiveContainer**, kéo theo nhiều thao tác phức tạp: phải cài 2 app riêng biệt, tự xuất/nhập chứng chỉ `.p12` thủ công, mất trắng 1 slot cho SideStore (không chạy được guest app), phải tự bật/tắt VPN thủ công và không thể cài không dây từ iPhone này sang iPhone khác.
+
+**∞Sideload (InfinitySideload)** hợp nhất toàn bộ **Trình ký & Tự gia hạn trên máy (On-Device Signer)** + **Hệ điều hành Đa Container 3 nhân (`1 Chính + 2 Phụ`)** vào **một ứng dụng duy nhất**, tự động hóa từ A–Z.
+
+![So sánh ∞Sideload vs SideStore + LiveContainer](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/assets/vs-sidestore-livecontainer.jpg)
+
+| Hạng Mục Chức Năng | **∞Sideload (InfinitySideload)** | **SideStore + LiveContainer** |
+| :--- | :--- | :--- |
+| **1. Kiến trúc Hợp nhất (All-in-One)** | **1 ứng dụng duy nhất**: Tích hợp sẵn lõi ký Apple ID/Chứng chỉ, tự gia hạn 7 ngày, kho nguồn AltStore, cài không dây iPhone-sang-iPhone và bộ chạy Đa Container ngay bên trong. | **2 ứng dụng rời rạc**: Phải cài SideStore trước, tải IPA LiveContainer cài qua SideStore, rồi tự xuất/đồng bộ chứng chỉ `.p12` thủ công. |
+| **2. Đa nhiệm 3 nhân thật trong RAM (`★★★`)** | **Tận dụng 100% cả 3 slot Apple ID Free** thành **3 nhân chạy độc lập** (`∞Sideload Chính` + `∞Sideload 1` + `∞Sideload 2`). Mở **3 ứng dụng cùng lúc trên RAM**, vuốt chuyển qua lại trong App Switcher mượt mà không bị đóng hay tải lại! | SideStore chiếm cố định 1 slot (không chạy được guest app). Muốn chạy đa nhiệm phải tự nhân bản & cấu hình `LiveContainer 2` thủ công, rất dễ đụng độ App ID. |
+| **3. Tự động điều phối RAM & Giữ nền phát nhạc (`Audio Pin`)** | **Bộ điều phối thông minh**: Tự nhận diện nhân nào đang rảnh để nạp ứng dụng mới mà không tắt ứng dụng đang mở. Tích hợp nút **Giữ nền phát** giúp YouTube, Spotify... phát nhạc liên tục dưới nền và khi khóa màn hình. | Phải tự chọn mở trong container nào; dễ vô tình ghi đè làm văng ứng dụng đang dùng dở. |
+| **4. Chế độ Chứng chỉ mua (`.p12` + `.mobileprovision`)** | **Cài đặt OTA trực tiếp**: Tự động ẩn toàn bộ nút/lịch Làm mới 7 ngày và **tuyệt đối không cần mở VPN (`LocalDevVPN`)** khi cài đặt, cập nhật hay quản lý ứng dụng. | SideStore bắt buộc đi qua VPN loopback; muốn cài bằng chứng chỉ mua không VPN phải cài thêm app thứ 3 (ESign / Feather / KSign). |
+| **5. Tự động Hand-off `LocalDevVPN` & Tự chạy tiếp khi Cập nhật** | **Luồng 1 chạm thông minh**: Bấm Cập nhật / Làm mới → Tự kiểm tra `LocalDevVPN`, chưa mở thì tự nhảy sang mở VPN → Tự quay lại `∞Sideload` và **tự chạy tiếp một mạch** cho đến khi hoàn tất → **Tự động tắt VPN** ngay sau khi xong để không ảnh hưởng mạng hay Tailscale. | Phải tự mở app VPN bật trước, tự quay lại app bấm lần 2 mới chạy, và phải tự nhớ tắt VPN thủ công. |
+| **6. Cài Không Dây từ iPhone sang iPhone (`Peer-to-Peer Wi-Fi`)** | **Hoàn toàn không cần dây cáp & không cần máy tính**: Chỉ cần 2 máy iPhone bắt chung Wi-Fi, máy đã có `∞Sideload` sẽ ghép nối không dây (qua mã PIN 6 số), ký và cài thẳng `∞Sideload` kèm sẵn file ghép đôi sang iPhone thứ 2! | Hoàn toàn không có tính năng cài đặt & tạo pairing không dây từ iPhone sang iPhone. |
+| **7. Ghép đôi trực tiếp trên máy (iOS 27+)** | Hỗ trợ **Ghép nối ngay trên thiết bị (`pair_host`)** qua Wi-Fi, bắn thông báo mã PIN 6 số trực tiếp trên màn hình Cài đặt iOS mà không cần máy tính. | Phụ thuộc công cụ `idevice_pair` / `jitterbugpair` trên máy tính. |
+| **8. Trình dọn dẹp Slot trực quan khi đầy 3 App** | Quét trực tiếp thiết bị qua `installation_proxy`, hiển thị danh sách các app đang chiếm slot của Apple ID và cho phép bấm **Gỡ & Cài tiếp** ngay trong 1 bảng chọn. | Chỉ báo lỗi chung chung (*Max 3 apps reached*), người dùng phải tự thoát ra màn hình chính tìm xóa mò. |
+| **9. Tạo Icon Màn hình chính & Widget thông minh** | **1 chạm tạo Icon Màn hình chính** (tự động chép Deep Link + Ảnh Icon Base64 và mở thẳng Phím tắt mẫu) kèm **Widget Màn hình chính** hiển thị nhanh các ứng dụng vừa mở, trạng thái `★★★` và hạn ký. | Tạo Shortcut/WebClip thủ công nhiều bước phức tạp. |
+| **10. Song ngữ Việt/Anh (`VI`/`EN`) & AI Crash Diagnostics** | Chuyển đổi **Tiếng Việt / Tiếng Anh** tức thì ngay trên thanh công cụ; tích hợp trình kiểm tra Mach-O & sao chép Crash Log 1 chạm để gửi cho AI hỗ trợ sửa lỗi. | Giao diện tiếng Anh, nhật ký lỗi kỹ thuật rời rạc khó tra cứu. |
 
 ---
 
