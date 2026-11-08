@@ -8,8 +8,7 @@ on:
         default: 'feat/sicontainer'
       release_tag:
         description: Release tag in hongson117/InfinitySideload-releases to bundle Sideload.ipa from
-        required: false
-        default: 'v0.1.0-b1031'
+        required: true
       publish_release:
         description: Upload isl-windows.zip & isl-macos-universal.zip to the release and repo
         type: boolean
@@ -24,7 +23,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     env:
-      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,19 +56,25 @@ jobs:
           windows/target/release/isl-cli.exe --version
       - name: Package and validate Windows installer
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
           $package = New-Item -ItemType Directory -Path out/isl-windows
           Copy-Item windows/target/release/isl-cli.exe,windows/Cai-iSideload.bat,windows/Kiem-tra-goi.ps1 -Destination $package
           Copy-Item windows/README.md -Destination (Join-Path $package 'HUONG-DAN.md')
-          $baseUrl = "https://github.com/hongson117/InfinitySideload-releases/releases/download/$($env:RELEASE_TAG)"
-          Invoke-WebRequest "$baseUrl/Sideload.ipa" -OutFile (Join-Path $package 'Sideload.ipa')
-          $sumsText = (Invoke-WebRequest "$baseUrl/SHA256SUMS.txt" -UseBasicParsing).Content
-          if ($sumsText -is [byte[]]) { $sumsText = [Text.Encoding]::UTF8.GetString($sumsText) }
+          $releaseInput = New-Item -ItemType Directory -Path out/release-input
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern Sideload.ipa --pattern SHA256SUMS.txt --pattern BUILD-SOURCE.json --dir $releaseInput.FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Release asset download failed' }
+          Copy-Item (Join-Path $releaseInput 'Sideload.ipa'),(Join-Path $releaseInput 'BUILD-SOURCE.json') -Destination $package
+          $sumsText = Get-Content -LiteralPath (Join-Path $releaseInput 'SHA256SUMS.txt') -Raw -Encoding UTF8
           $expectedLine = ($sumsText -split "`r?`n" | Where-Object { $_ -match '\s+Sideload\.ipa$' } | Select-Object -First 1)
           if (-not $expectedLine) { throw 'Missing Sideload.ipa entry in release SHA256SUMS.txt' }
           $expectedSha = ($expectedLine -split '\s+')[0].ToLower()
           if ((Get-FileHash (Join-Path $package 'Sideload.ipa') -Algorithm SHA256).Hash.ToLower() -ne $expectedSha) { throw 'Unexpected Sideload.ipa checksum' }
+          $sourceSha = (git rev-parse HEAD).Trim()
+          python scripts/verify_installer_app.py $package.FullName --tag $env:RELEASE_TAG --platform windows-x64 --installer-source $sourceSha
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled app version verification failed' }
           python scripts/generate_notices.py --manifest-path windows/Cargo.toml --platform x86_64-pc-windows-msvc --output (Join-Path $package 'ThirdPartyNotices.txt')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $rows = Get-ChildItem -LiteralPath $package -File | Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower(),$_.Name }
@@ -92,7 +97,7 @@ jobs:
     timeout-minutes: 35
     env:
       MACOSX_DEPLOYMENT_TARGET: '11.0'
-      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -123,6 +128,8 @@ jobs:
           cargo build --locked --release --manifest-path macos/Cargo.toml --target aarch64-apple-darwin
           cargo build --locked --release --manifest-path macos/Cargo.toml --target x86_64-apple-darwin
       - name: Package and test Universal installer
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p out/iSideload-macOS
@@ -141,12 +148,14 @@ jobs:
           cp macos/Cai-iSideload.command macos/README-VI.txt out/iSideload-macOS/
           chmod 755 out/iSideload-macOS/Cai-iSideload.command out/iSideload-macOS/isl-mac
           bash -n out/iSideload-macOS/Cai-iSideload.command
-          BASE_URL="https://github.com/hongson117/InfinitySideload-releases/releases/download/${RELEASE_TAG}"
-          curl --fail --location --retry 3 "${BASE_URL}/Sideload.ipa" -o out/iSideload-macOS/Sideload.ipa
-          EXPECTED_SHA=$(curl --fail --location --retry 3 "${BASE_URL}/SHA256SUMS.txt" | awk '/Sideload\.ipa$/ {print $1}')
+          mkdir -p out/release-input
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern Sideload.ipa --pattern SHA256SUMS.txt --pattern BUILD-SOURCE.json --dir out/release-input
+          cp out/release-input/Sideload.ipa out/release-input/BUILD-SOURCE.json out/iSideload-macOS/
+          EXPECTED_SHA=$(awk '/Sideload\.ipa$/ {print $1}' out/release-input/SHA256SUMS.txt)
           echo "${EXPECTED_SHA}  out/iSideload-macOS/Sideload.ipa" | shasum -a 256 -c -
+          python3 scripts/verify_installer_app.py out/iSideload-macOS --tag "$RELEASE_TAG" --platform macos-universal --installer-source "$(git rev-parse HEAD)"
           python3 scripts/generate_notices.py --manifest-path macos/Cargo.toml --platform aarch64-apple-darwin --output out/iSideload-macOS/ThirdPartyNotices.txt
-          (cd out/iSideload-macOS && shasum -a 256 isl-mac Sideload.ipa Cai-iSideload.command README-VI.txt ThirdPartyNotices.txt > SHA256SUMS.txt && shasum -a 256 -c SHA256SUMS.txt)
+          (cd out/iSideload-macOS && shasum -a 256 isl-mac Sideload.ipa Cai-iSideload.command README-VI.txt ThirdPartyNotices.txt BUILD-SOURCE.json INSTALLER-BUILD.json > SHA256SUMS.txt && shasum -a 256 -c SHA256SUMS.txt)
           ditto -c -k --keepParent out/iSideload-macOS isl-macos-universal.zip
           shasum -a 256 isl-macos-universal.zip > SHA256SUMS-macos.txt
       - uses: actions/upload-artifact@v4
@@ -165,7 +174,7 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASE_TAG: ${{ inputs.release_tag || 'v0.1.0-b1031' }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
@@ -187,6 +196,7 @@ jobs:
           cp installer-files/isl-windows.zip ./isl-windows.zip
           cp installer-files/isl-macos-universal.zip ./isl-macos-universal.zip
           shasum -a 256 isl-macos-universal.zip isl-windows.zip > SHA256SUMS.txt
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern BUILD-SOURCE.json --dir installer-files/release-metadata
           python3 - <<'PY'
           import hashlib, json, os, pathlib
           tag = os.environ["RELEASE_TAG"]
@@ -198,6 +208,10 @@ jobs:
           if manifest_p.exists():
               data = json.loads(manifest_p.read_text(encoding="utf-8"))
               data["version"] = tag
+              app_meta = json.loads(pathlib.Path("installer-files/release-metadata/BUILD-SOURCE.json").read_text())
+              assert tag == f"v{app_meta['version']}-b{app_meta['build']}"
+              data["app_version"] = app_meta["version"]
+              data["app_build"] = str(app_meta["build"])
               data["packages"]["windows"]["sha256"] = win_sha
               data["packages"]["windows"]["bytes"] = win_p.stat().st_size
               data["packages"]["windows"]["release_url"] = f"https://github.com/hongson117/InfinitySideload-releases/releases/download/{tag}/isl-windows.zip"

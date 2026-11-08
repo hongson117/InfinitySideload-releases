@@ -64,6 +64,8 @@ IPA chưa ký (`Sideload.ipa` đã kèm sẵn `SideloadRunner1.ipa` và `Sideloa
 )
 assets = [
     ipa,
+    r1_ipa,
+    r2_ipa,
     root / "SHA256SUMS.txt",
     root / "ThirdPartyNotices.txt",
     root / "BUILD-SOURCE.json",
@@ -89,6 +91,8 @@ if not exists:
         str(notes),
     )
 url = f"https://github.com/{repo}/releases/download/{tag}/Sideload.ipa"
+r1_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner1.ipa"
+r2_url = f"https://github.com/{repo}/releases/download/{tag}/SideloadRunner2.ipa"
 with urllib.request.urlopen(url, timeout=120) as response:
     assert hashlib.file_digest(response, "sha256").hexdigest() == sha
 
