@@ -33,7 +33,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1041`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1048`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
@@ -44,6 +44,14 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 | **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1048
+
+- Bộ tải GitHub API dự phòng cho cập nhật app và tải IPA từ nguồn, giữ kiểm tra tính toàn vẹn của bản cập nhật.
+- Widget **Mở Instagram** riêng cho Màn hình chính/Màn hình khóa; giữ lựa chọn widget Lịch khi chuẩn bị Instagram.
+- Sửa chuẩn bị ExtensionKit, đường Swift của Instagram/Sparkle và tương thích Substrate cũ trong Timemark 4.0.76.
+- Sau cập nhật từ bản cũ, chọn **Chuẩn bị lại** cho Instagram và Timemark. Người dùng đã xác nhận hai app mở được, AppTesters tải/nhập được và widget mở đúng Instagram trên 1047; 1048 bổ sung việc giữ lựa chọn widget Lịch.
+- Bộ cài Windows/macOS đóng kèm IPA 1048; BUILD-SOURCE.json và INSTALLER-BUILD.json ghi rõ phiên bản, nguồn app và nguồn bộ cài.
 
 ---
 
