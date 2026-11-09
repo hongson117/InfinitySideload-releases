@@ -15,3 +15,7 @@
 11. Khi báo kết quả, nêu phiên bản gói, chế độ, kết quả thực tế và bước còn cần người dùng. Phân biệt self-test ngoại tuyến, xác minh USB và kiểm tra LocalDevVPN trên iPhone. Không khẳng định mọi lỗi socket đã được sửa chỉ vì đã thay file ghép đôi.
 
 Giữ các bản ghi/chứng chỉ người dùng trên thiết bị/máy tính của họ. Repo public chỉ có bộ cài đã được kiểm tra và tài liệu.
+
+## Phạm vi công khai
+
+Mã nguồn ứng dụng iOS và chương trình cài đặt Windows/macOS phải ở kho Private. Không commit các cây nguồn `ios/`, `core/`, `windows/`, `macos/` hoặc tải source archive của kho Private lên repo, Release hay artifact công khai. Chỉ phát hành gói đã biên dịch, tài liệu, checksum và metadata không chứa bí mật. Các script hỗ trợ phát hành và trang tạo icon hiện có của kho phân phối không phải mã nguồn ứng dụng. Không đổi quyền kho mã nguồn sang Public khi cập nhật bản phát hành.

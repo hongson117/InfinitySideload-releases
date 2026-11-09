@@ -1,5 +1,17 @@
 # ∞Sideload (InfinitySideload) — Hướng Dẫn Cài Đặt, Sử Dụng & AI Agent Playbook
 
+> **Kho tải về công khai. Mã nguồn ứng dụng và bộ cài được lưu trong kho riêng tư (Private).** Kho này phân phối các gói đã biên dịch, hướng dẫn, thông tin cập nhật và các script hỗ trợ phát hành/trang tạo icon; không chứa mã nguồn ứng dụng iOS hoặc chương trình cài đặt Windows/macOS.
+
+| Tải bản mới nhất | Liên kết |
+| :--- | :--- |
+| Bộ cài USB Windows | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
+| Bộ cài USB macOS — Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
+| Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
+| Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
+
+**Lưu ý về “Source code (zip / tar.gz)” trên GitHub Releases:** GitHub tự tạo hai liên kết này từ nội dung kho phân phối công khai tại tag phát hành. Chúng không phải mã nguồn ứng dụng trong kho Private. Để cài đặt, chọn các gói tải trong bảng trên.
+
 **Hệ thống Sideload & Đa Container tự gia hạn không cần máy tính cho iPhone/iPad (iOS/iPadOS 17.4+ & iOS 27).**  
 Hỗ trợ đầy đủ song ngữ **Tiếng Việt (`VI`)** và **Tiếng Anh (`EN`)**.  
 ✨ **Credit by HongSon (`@hongson117`)**
