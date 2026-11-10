@@ -76,11 +76,17 @@ jobs:
           repository: hongson117/InfinitySideload
           ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
           ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          fetch-depth: 0
           persist-credentials: false
           show-progress: false
           submodules: false
       - name: Record source identity
         run: echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Check native dynamic loader error preservation
+        run: |
+          if [[ -f scripts/test_guest_dlopen.py ]]; then
+            python3 scripts/test_guest_dlopen.py --baseline-ref 77c5762206c69350faea8d5ec5064fda4676611f
+          fi
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-ios
