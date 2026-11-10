@@ -87,6 +87,21 @@ jobs:
           if [[ -f scripts/test_guest_dlopen.py ]]; then
             python3 scripts/test_guest_dlopen.py --baseline-ref 77c5762206c69350faea8d5ec5064fda4676611f
           fi
+      - name: Check scoped purchase callback diagnostics
+        run: |
+          if [[ -f tests/SICStoreKitDiagnosticsTests.m ]]; then
+            (
+              set -e
+              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICStoreKitDiagnostics.m tests/SICStoreKitDiagnosticsTests.m -o /tmp/store-diagnostics-tests
+              /tmp/store-diagnostics-tests
+              /tmp/store-diagnostics-tests --unexpected-signature
+            ) >/tmp/store-diagnostics-tests.log 2>&1 || {
+              grep -E 'error:|^FAIL|^CHECK FAILED' /tmp/store-diagnostics-tests.log | head -n 12 || true
+              echo 'Purchase callback diagnostics tests failed; source snippets were not uploaded.'
+              exit 1
+            }
+            echo 'Scoped purchase callback diagnostics tests passed.'
+          fi
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-ios
