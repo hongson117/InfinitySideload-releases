@@ -61,7 +61,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 - Sửa lỗi container đọc mất thông báo lỗi của bộ nạp thư viện, khiến Flutter có thể nhận handle rỗng thay vì thử thư viện dự phòng. Chuỗi lỗi này được ghi nhận khi Dictionary/Oxford 16.8.1 khởi động SQLite.
 - Giữ nguyên cơ chế chọn thư viện của ứng dụng; không thay SQLite hoặc thêm alias riêng cho Oxford.
-- Kiểm thử native macOS tái hiện lỗi 1048 và xác nhận bản sửa giữ lỗi, thử được thư viện dự phòng, hỗ trợ các dạng đường dẫn và giữ lỗi riêng theo thread. Ngày 2026-11-10, người dùng xác nhận Oxford 16.8.1 đã vào được giao diện từ điển trên iPhone sau khi cập nhật 1049.
+- Kiểm thử native macOS tái hiện lỗi 1048 và xác nhận bản sửa giữ lỗi, thử được thư viện dự phòng, hỗ trợ các dạng đường dẫn và giữ lỗi riêng theo thread. Ngày 2026-11-10, người dùng xác nhận Oxford 16.8.1 đã qua màn hình khởi động sau cập nhật 1049, nhưng còn dừng ở màn hình chọn gói dùng thử/thuê bao. Chức năng từ điển chưa được xác nhận hoạt động; vấn đề tiếp theo đang được kiểm tra.
 - App chính và hai runner cùng build 1049. **Bộ cài USB Windows/macOS vẫn là gói 1048**, không build lại trong lần phát hành này; người đã cài dùng mục cập nhật trong app để lên 1049.
 
 ### Thay đổi trong build 1048
