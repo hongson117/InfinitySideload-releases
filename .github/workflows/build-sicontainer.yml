@@ -146,6 +146,10 @@ jobs:
               clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICURLInterception.m tests/SICURLInterceptionTests.m -o /tmp/url-interception-tests
               /tmp/url-interception-tests
             fi
+            if [[ -f tests/SICMSHookAndBootRecoveryTests.m ]]; then
+              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICHookSafety.m tests/SICMSHookAndBootRecoveryTests.m -o /tmp/hook-safety-tests
+              /tmp/hook-safety-tests
+            fi
             if [[ -f tests/SIWidgetBridgeTests.m ]]; then
               clang -fobjc-arc -fblocks -framework Foundation -framework JavaScriptCore -framework ImageIO -framework CoreGraphics ios/SIContainerWidget/SIWidgetRuntime.m tests/SIWidgetBridgeTests.m -o /tmp/widget-bridge-tests
               /tmp/widget-bridge-tests
@@ -208,23 +212,67 @@ jobs:
           python3 scripts/audit_release.py publish/SideloadRunner2.ipa --expected-sha "${SOURCE_SHA:0:7}" --output publish/runner2-audit.json >/tmp/audit-r2.log 2>&1
           (cd publish && shasum -a 256 Sideload.ipa SideloadRunner1.ipa SideloadRunner2.ipa > SHA256SUMS.txt)
           python3 - <<'PY'
-          import os,json,pathlib,plistlib
-          info=plistlib.loads(pathlib.Path('out/Payload/SIContainer.app/Info.plist').read_bytes())
-          r1_info=plistlib.loads(pathlib.Path('out-runner1/Payload/SIContainerRunner1.app/Info.plist').read_bytes())
-          r2_info=plistlib.loads(pathlib.Path('out-runner2/Payload/SIContainerRunner2.app/Info.plist').read_bytes())
-          assert info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Packaged version differs from committed target'
-          assert r1_info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Runner1 version differs from committed target'
-          assert r2_info['CFBundleShortVersionString']==os.environ['SOURCE_VERSION'], 'Runner2 version differs from committed target'
+          import datetime, hashlib, json, os, pathlib, plistlib, struct, uuid
+          def macho_id(path):
+              raw_b = pathlib.Path(path).read_bytes()
+              sha = hashlib.sha256(raw_b).hexdigest()
+              lc_uuid = None
+              if len(raw_b) >= 32 and struct.unpack_from('<I', raw_b, 0)[0] == 0xFEEDFACF:
+                  ncmds = struct.unpack_from('<I', raw_b, 16)[0]
+                  off = 32
+                  for _ in range(ncmds):
+                      if off + 8 > len(raw_b):
+                          break
+                      cmd, cmdsize = struct.unpack_from('<II', raw_b, off)
+                      if cmd == 0x1B and cmdsize >= 24 and off + 24 <= len(raw_b):
+                          lc_uuid = str(uuid.UUID(bytes=raw_b[off+8:off+24])).upper()
+                          break
+                      if cmdsize < 8:
+                          break
+                      off += cmdsize
+              return {'uuid': lc_uuid, 'macho_sha256': sha}
+          info = plistlib.loads(pathlib.Path('out/Payload/SIContainer.app/Info.plist').read_bytes())
+          r1_info = plistlib.loads(pathlib.Path('out-runner1/Payload/SIContainerRunner1.app/Info.plist').read_bytes())
+          r2_info = plistlib.loads(pathlib.Path('out-runner2/Payload/SIContainerRunner2.app/Info.plist').read_bytes())
+          exp_sha7 = os.environ['SOURCE_SHA'][:7]
+          exp_ver = os.environ['SOURCE_VERSION']
+          exp_build = str(os.environ['BUILD_NUMBER'])
+          assert info['CFBundleShortVersionString'] == exp_ver, 'Packaged version differs from committed target'
+          assert r1_info['CFBundleShortVersionString'] == exp_ver, 'Runner1 version differs from committed target'
+          assert r2_info['CFBundleShortVersionString'] == exp_ver, 'Runner2 version differs from committed target'
+          assert str(info['CFBundleVersion']) == exp_build and str(r1_info['CFBundleVersion']) == exp_build and str(r2_info['CFBundleVersion']) == exp_build, 'Build number mismatch across targets'
+          assert info['ISLGitSHA'] == exp_sha7 and r1_info['ISLGitSHA'] == exp_sha7 and r2_info['ISLGitSHA'] == exp_sha7, 'ISLGitSHA mismatch across targets'
+          diag_src = pathlib.Path('ios/iContainer/SICStoreKitDiagnostics.m')
+          if diag_src.is_file():
+              assert '#define SIC_STOREKIT_DIAGNOSTICS_DEFAULT 0' in diag_src.read_text(encoding='utf-8'), 'StoreKit diagnostics must default to OFF (0)'
+          artifact_hashes = {
+              name: hashlib.sha256(pathlib.Path(f'publish/{name}').read_bytes()).hexdigest()
+              for name in ('Sideload.ipa', 'SideloadRunner1.ipa', 'SideloadRunner2.ipa')
+          }
+          binary_ids = {
+              'SIContainer': macho_id('out/Payload/SIContainer.app/SIContainer'),
+              'SIContainerRunner1': macho_id('out-runner1/Payload/SIContainerRunner1.app/SIContainerRunner1'),
+              'SIContainerRunner2': macho_id('out-runner2/Payload/SIContainerRunner2.app/SIContainerRunner2'),
+              'SIContainerWidget': macho_id('out/Payload/SIContainer.app/PlugIns/SIContainerWidget.appex/SIContainerWidget'),
+          }
           pathlib.Path('publish/BUILD-SOURCE.json').write_text(json.dumps({
-              'source_commit':os.environ['SOURCE_SHA'],
-              'build':str(info['CFBundleVersion']),
-              'product':'InfinitySideload',
-              'bundle_id':info['CFBundleIdentifier'],
-              'runner1_bundle_id':r1_info['CFBundleIdentifier'],
-              'runner2_bundle_id':r2_info['CFBundleIdentifier'],
-              'version':info['CFBundleShortVersionString'],
-              'unsigned':True
-          }))
+              'source_repository': 'hongson117/InfinitySideload',
+              'source_commit': os.environ['SOURCE_SHA'],
+              'release_repository': os.environ.get('GITHUB_REPOSITORY', 'hongson117/InfinitySideload-releases'),
+              'workflow_commit': os.environ.get('GITHUB_SHA', ''),
+              'workflow_run_id': os.environ.get('GITHUB_RUN_ID', ''),
+              'artifact_sha256': artifact_hashes,
+              'binary_build_id': binary_ids,
+              'git_sha_embedded': info['ISLGitSHA'],
+              'build_timestamp': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'build': str(info['CFBundleVersion']),
+              'product': 'InfinitySideload',
+              'bundle_id': info['CFBundleIdentifier'],
+              'runner1_bundle_id': r1_info['CFBundleIdentifier'],
+              'runner2_bundle_id': r2_info['CFBundleIdentifier'],
+              'version': info['CFBundleShortVersionString'],
+              'unsigned': True
+          }, indent=2) + '\n', encoding='utf-8')
           pathlib.Path('publish/ThirdPartyNotices.txt').write_bytes(pathlib.Path('out/Payload/SIContainer.app/ThirdPartyNotices.txt').read_bytes())
           PY
       - uses: actions/upload-artifact@v4
