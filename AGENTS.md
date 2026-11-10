@@ -19,3 +19,5 @@ Giữ các bản ghi/chứng chỉ người dùng trên thiết bị/máy tính 
 ## Phạm vi công khai
 
 Mã nguồn ứng dụng iOS và chương trình cài đặt Windows/macOS phải ở kho Private. Không commit các cây nguồn `ios/`, `core/`, `windows/`, `macos/` hoặc tải source archive của kho Private lên repo, Release hay artifact công khai. Chỉ phát hành gói đã biên dịch, tài liệu, checksum và metadata không chứa bí mật. Các script hỗ trợ phát hành và trang tạo icon hiện có của kho phân phối không phải mã nguồn ứng dụng. Không đổi quyền kho mã nguồn sang Public khi cập nhật bản phát hành.
+
+Theo yêu cầu chủ dự án ngày 2026-11-10, các lần cập nhật mặc định chỉ phát hành IPA ứng dụng và runner cùng build. Không build lại bộ cài Windows/macOS nếu người dùng chưa yêu cầu rõ. Giữ nguyên phiên bản và checksum thật trong `INSTALLERS.json`; có thể giữ nguyên các ZIP cũ trên Release mới để các link `latest/download` đã chia sẻ vẫn hoạt động, nhưng phải ghi rõ phiên bản bộ cài cũ, không đổi nhãn thành phiên bản app mới.

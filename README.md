@@ -4,8 +4,8 @@
 
 | Tải bản mới nhất | Liên kết |
 | :--- | :--- |
-| Bộ cài USB Windows | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
-| Bộ cài USB macOS — Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| Bộ cài USB Windows — gói 1048 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
+| Bộ cài USB macOS — gói 1048, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
 | Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
 | Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
@@ -45,7 +45,7 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1048`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1049`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
@@ -56,6 +56,13 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 | **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1049
+
+- Sửa lỗi container đọc mất thông báo lỗi của bộ nạp thư viện, khiến Flutter có thể nhận handle rỗng thay vì thử thư viện dự phòng. Chuỗi lỗi này được ghi nhận khi Dictionary/Oxford 16.8.1 khởi động SQLite.
+- Giữ nguyên cơ chế chọn thư viện của ứng dụng; không thay SQLite hoặc thêm alias riêng cho Oxford.
+- Kiểm thử native macOS tái hiện lỗi 1048 và xác nhận bản sửa giữ lỗi, thử được thư viện dự phòng, hỗ trợ các dạng đường dẫn và giữ lỗi riêng theo thread. Kết quả Oxford trên iPhone cần được xác nhận sau cập nhật.
+- App chính và hai runner cùng build 1049. **Bộ cài USB Windows/macOS vẫn là gói 1048**, không build lại trong lần phát hành này; người đã cài dùng mục cập nhật trong app để lên 1049.
 
 ### Thay đổi trong build 1048
 
