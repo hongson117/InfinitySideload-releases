@@ -135,6 +135,10 @@ jobs:
               swiftc -parse-as-library ios/iContainer/SIShortcut.swift tests/SIShortcutTests.swift -o /tmp/shortcut-tests
               /tmp/shortcut-tests
             fi
+            if [[ -f tests/NativeSwitcherTests.swift ]]; then
+              swiftc -parse-as-library ios/iSideload/Core/SlotTopology.swift ios/iSideload/Core/NativeLibraryModels.swift ios/iSideload/Core/AppIDQuotaLedger.swift ios/iSideload/Core/NativeLibraryStore.swift ios/iSideload/Core/NativeActivationManager.swift tests/NativeSwitcherTests.swift -o /tmp/native-switcher-tests
+              /tmp/native-switcher-tests
+            fi
             if [[ -f tests/SILunarCalendarTests.swift ]]; then
               swiftc -parse-as-library ios/SIContainerWidget/SILunarCalendar.swift tests/SILunarCalendarTests.swift -o /tmp/lunar-tests
               /tmp/lunar-tests
