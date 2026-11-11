@@ -92,7 +92,7 @@ jobs:
           if [[ -f tests/SICStoreKitDiagnosticsTests.m ]]; then
             (
               set -e
-              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICStoreKitDiagnostics.m tests/SICStoreKitDiagnosticsTests.m -o /tmp/store-diagnostics-tests
+              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICStoreKitDiagnostics.h tests/SICStoreKitDiagnosticsTests.m -o /tmp/store-diagnostics-tests
               /tmp/store-diagnostics-tests
               /tmp/store-diagnostics-tests --unexpected-signature
             ) >/tmp/store-diagnostics-tests.log 2>&1 || {
@@ -242,7 +242,7 @@ jobs:
           assert r2_info['CFBundleShortVersionString'] == exp_ver, 'Runner2 version differs from committed target'
           assert str(info['CFBundleVersion']) == exp_build and str(r1_info['CFBundleVersion']) == exp_build and str(r2_info['CFBundleVersion']) == exp_build, 'Build number mismatch across targets'
           assert info['ISLGitSHA'] == exp_sha7 and r1_info['ISLGitSHA'] == exp_sha7 and r2_info['ISLGitSHA'] == exp_sha7, 'ISLGitSHA mismatch across targets'
-          diag_src = pathlib.Path('ios/iContainer/SICStoreKitDiagnostics.m')
+          diag_src = pathlib.Path('ios/iContainer/SICStoreKitDiagnostics.h')
           if diag_src.is_file():
               assert '#define SIC_STOREKIT_DIAGNOSTICS_DEFAULT 0' in diag_src.read_text(encoding='utf-8'), 'StoreKit diagnostics must default to OFF (0)'
           artifact_hashes = {
