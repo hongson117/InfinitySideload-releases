@@ -92,7 +92,7 @@ jobs:
           if [[ -f tests/SICStoreKitDiagnosticsTests.m ]]; then
             (
               set -e
-              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICStoreKitDiagnostics.h tests/SICStoreKitDiagnosticsTests.m -o /tmp/store-diagnostics-tests
+              clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICStoreKitDiagnostics.m tests/SICStoreKitDiagnosticsTests.m -o /tmp/store-diagnostics-tests
               /tmp/store-diagnostics-tests
               /tmp/store-diagnostics-tests --unexpected-signature
             ) >/tmp/store-diagnostics-tests.log 2>&1 || {
