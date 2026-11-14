@@ -4,8 +4,8 @@
 
 | Tải bản mới nhất | Liên kết |
 | :--- | :--- |
-| Bộ cài USB Windows — gói 1048 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
-| Bộ cài USB macOS — gói 1048, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| Bộ cài USB Windows — gói 1066 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
+| Bộ cài USB macOS — gói 1066, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
 | Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
 | Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
@@ -45,17 +45,24 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1049`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1066`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp (Release & Mirror) |
 | :--- | :--- | :--- |
-| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
-| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
+| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1066 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
+| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1066 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1066 (`v0.1.0-b1066`)
+
+- Đồng bộ trọn bộ **Ứng dụng iOS (`Sideload.ipa`, `SideloadRunner1.ipa`, `SideloadRunner2.ipa`)** và **Bộ cài USB Windows (`isl-windows.zip`) + macOS Universal (`isl-macos-universal.zip`)** từ nhánh ổn định chuẩn (`b2d115c`).
+- Kiến trúc **Thuần 2 / 3 Container** (mặc định 3 Container `★★★`) kèm trình gỡ ứng dụng sideload ngoài luồng 1 chạm.
+- Tương thích sâu No-JIT GOT Rebinding (`SICHookSafety`), ảo hóa Keychain/SecKey, StoreKit & Crash-Guard cho các IPA thương mại/tweak (BeautyPlus, Oxford Dictionary, InShot, Instagram, YouTube...).
+- Cả hai gói `isl-windows.zip` và `isl-macos-universal.zip` đều đóng kèm trực tiếp `Sideload.ipa` Build 1066 đã kiểm chứng SHA-256 (`BUILD-SOURCE.json` & `INSTALLER-BUILD.json`).
 
 ### Thay đổi trong build 1049
 
