@@ -1,0 +1,18 @@
+name: Verify public USB support endpoint
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  https:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify HTTPS without joining Tailscale
+        shell: bash
+        run: |
+          set -e
+          curl --fail --connect-timeout 15 --max-time 30 https://us-exitnode.tail22bb81.ts.net/health/live
+          code=$(curl --silent --output /dev/null --write-out "%{http_code}" --connect-timeout 15 --max-time 30 -X POST -H 'Content-Type: application/json' -d '{}' https://us-exitnode.tail22bb81.ts.net/mcp/wrong)
+          test "$code" = 401
+          echo 'Public HTTPS and rejection of an invalid MCP key passed.'
