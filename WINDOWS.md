@@ -2,7 +2,7 @@
 
 [Tải bộ cài](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/isl-windows.zip) · [Phiên bản và SHA-256](INSTALLERS.json)
 
-Gói hiện tại đóng kèm **∞Sideload 0.1.0 · build 1048**. BUILD-SOURCE.json và INSTALLER-BUILD.json bên trong ZIP ghi phiên bản app và nguồn bộ cài.
+Gói hiện tại đóng kèm **∞Sideload 0.1.0 · build 1068**. BUILD-SOURCE.json và INSTALLER-BUILD.json bên trong ZIP ghi phiên bản app và nguồn bộ cài.
 
 ## Chuẩn bị
 
@@ -26,6 +26,14 @@ Với chế độ 1/3, nhập Apple ID, mật khẩu và 2FA trực tiếp trong
 Giữ cáp và máy mở khóa đến khi hoàn tất cài app, chuyển file ghép đôi và xác minh. Nếu app đã cài nhưng ghép đôi lỗi, giữ app rồi dùng chế độ 2/4 để tiếp tục.
 
 Trên iPhone, tin cậy nhà phát triển tại **Cài đặt → Cài đặt chung → VPN & Quản lý thiết bị** nếu được hỏi. Mở ∞Sideload, bật Wi-Fi/LocalDevVPN rồi dùng **Cài đặt → Thiết bị & Ghép đôi → Kiểm tra kết nối thiết bị**.
+
+## Chuyển chứng chỉ sang iPhone/iPad lần đầu (Apple ID miễn phí)
+
+- Apple ID miễn phí cho tối đa **10 App ID / 7 ngày** và **3 app**, nhưng **chỉ có đúng 1 chứng chỉ phát triển (`Development Certificate`)** hoạt động tại một thời điểm. Bộ cài Windows đã tạm dùng suất đó (`iSideload Windows`) và giữ khóa riêng trên PC.
+- Do đó, lần đầu tiên bạn cài **Phụ 1 / Phụ 2** hoặc gia hạn trên iPhone/iPad mới cài, app sẽ báo **`MAXIMUM DEVELOPMENT CERTIFICATES REACHED`** và liệt kê **`iSideload Windows`** (*Liên quan bản app đang chạy*). **Bạn nên chọn Thu hồi (`Revoke`)** để máy tự tạo chứng chỉ riêng:
+  1. **Cách gọn nhất (khuyên dùng):** Bấm **Cancel** → vào **Cài đặt → Gia hạn ∞Sideload (`Renew ∞Sideload`)** → tích chọn **`iSideload Windows`** → bấm **Thu hồi và ký tiếp** → xác nhận (app sẽ cài Phụ 1/Phụ 2 và tự ký đè lại cả bản Chính sang chứng chỉ mới).
+  2. Nếu bạn đã thu hồi lúc cài Phụ 1: **đừng đóng hẳn app vội**, vào ngay **Cài đặt → Gia hạn ∞Sideload** để ký lại bản Chính.
+- Nếu dùng nhiều máy (iPhone + iPad), mỗi máy nên dùng **1 Apple ID miễn phí riêng** để không đụng chứng chỉ của nhau.
 
 ## Kiểm tra ngoại tuyến
 

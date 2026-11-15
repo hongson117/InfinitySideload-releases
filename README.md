@@ -4,8 +4,8 @@
 
 | Tải bản mới nhất | Liên kết |
 | :--- | :--- |
-| Bộ cài USB Windows — gói 1066 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
-| Bộ cài USB macOS — gói 1066, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| Bộ cài USB Windows — gói 1068 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
+| Bộ cài USB macOS — gói 1068, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
 | Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
 | Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
@@ -45,17 +45,23 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1066`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1068`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp (Release & Mirror) |
 | :--- | :--- | :--- |
-| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1066 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
-| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1066 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
+| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1068 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
+| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1068 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1068 (`v0.1.0-b1068`)
+
+- **Gia hạn nhanh không cần cài lại (`misagent` fast profile refresh):** Khi không có thay đổi nhị phân/entitlement, bấm **Làm mới / Gia hạn** chỉ cấp provisioning profile 7 ngày mới trực tiếp qua `misagent` mà không phải ký lại hay đóng app (tự động chuyển sang ký đầy đủ nếu phát hiện bất kỳ sai khác nào).
+- **Ảo hóa `UniformTypeIdentifiers` (`UTType`) cho ứng dụng khách:** Nạp các định nghĩa `UTExportedTypeDeclarations`, `UTImportedTypeDeclarations` và `CFBundleDocumentTypes` từ `Info.plist` của ứng dụng khách vào runtime `UTType`, sửa triệt để lỗi văng khi khởi động trên **Bazaart 27.0.8** (`public.woff`, `public.woff2`, `me.bazaart.project`) và các ứng dụng dùng UTI tùy biến (người dùng chỉ cần cập nhật `∞Sideload` lên 1068, không cần *Chuẩn bị lại* app đã nhập).
+- **Hướng dẫn chuyển chứng chỉ ngay trong app & bộ cài USB:** Giải thích rõ cơ chế Apple ID miễn phí (1 chứng chỉ / 10 App ID / 3 app) ngay trên màn hình thu hồi chứng chỉ khi xuất hiện `iSideload Windows` / `iSideload macOS`, và sửa kiểm tra build mục tiêu của `Phụ 1 / Phụ 2` khi cập nhật trong ứng dụng.
 
 ### Thay đổi trong build 1066 (`v0.1.0-b1066`)
 
@@ -144,6 +150,7 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 | `-80045` / `-45025` / `anisette` | Máy chủ Anisette đang bận hoặc bị Apple từ chối | Để trống ô Anisette URL trong Cài đặt để app tự động xoay vòng qua 4 máy chủ (`ani.jkcoxson.com` → `mac-ani.jkcoxson.com` → `ani.npeg.us` → `ani.sidestore.io`). |
 | `0xe8008015` / `0xe800801c` / `ApplicationVerificationFailed` | Chưa bật Developer Mode hoặc lỗi chữ ký | Vào **Cài đặt → Quyền riêng tư & Bảo mật → Chế độ nhà phát triển (Developer Mode)** → Bật → Khởi động lại iPhone → Bấm **Bật (Turn On)** và nhập mật mã. |
 | `Untrusted Developer` (Nhà phát triển chưa được tin cậy) | Chưa tin cậy chứng chỉ Apple ID | Vào **Cài đặt → Cài đặt chung → VPN & Quản lý thiết bị** → Chọn email Apple ID dưới mục *Ứng dụng nhà phát triển* → Bấm **Tin cậy**. |
+| `MAXIMUM DEVELOPMENT CERTIFICATES REACHED` / `7460` (`iSideload Windows` / `iSideload macOS`) | Apple ID miễn phí có 10 App ID / 7 ngày nhưng **chỉ giới hạn tối đa 1 chứng chỉ phát triển** tại một thời điểm. Bộ cài PC/Mac vừa dùng suất đó để cài app vào iPhone/iPad và giữ khóa riêng trên máy tính. | **Nên thu hồi (`Revoke`)** để chuyển chứng chỉ về iPhone/iPad:<br>1. **Khuyên dùng:** Bấm **Cancel** → vào **Cài đặt → Gia hạn ∞Sideload (`Renew ∞Sideload`)** → tích chọn **`iSideload Windows`** / **`iSideload macOS`** → bấm **Thu hồi và ký tiếp** (cài Phụ 1/2 và tự ký lại cả bản Chính trong 1 lượt).<br>2. Nếu đã thu hồi ngay lúc cài **Phụ 1**: **đừng đóng hẳn app vội**, hãy vào ngay **Cài đặt → Gia hạn ∞Sideload** để ký đè bản Chính sang chứng chỉ mới.<br>3. Mỗi iPhone/iPad nên dùng **1 Apple ID miễn phí riêng**. |
 | `Không thấy thiết bị qua LocalDevVPN (10.7.0.1)` | Chưa bật LocalDevVPN hoặc file ghép đôi hết hiệu lực | 1. Cài **LocalDevVPN** (hoặc **StosVPN**) từ App Store và bật Connect.<br>2. Nếu vẫn báo lỗi `pair-verify`: ghép nối lại ngay trên máy (**Cài đặt → Thiết bị và ghép đôi → Ghép nối ngay trên máy**) hoặc chạy `--pair-only` qua cáp USB. |
 | Chỉ hiện `★★` (2 sao), chưa lên `★★★` (3 sao) | Tài khoản miễn phí chạm trần 3 app sideload trên thiết bị, hoặc thiếu 1 Runner | Bấm vào nút **`★★`** ở góc trên bên phải tab **Ứng dụng**:<br>- Nếu thiếu Runner, app sẽ tự ký và cài bổ sung.<br>- Nếu đầy 3 slot của tài khoản miễn phí, bảng **Dọn dẹp Slot** sẽ hiện ra để gỡ bớt 1 app ngoài và cài ngay `∞Sideload 2`. |
 
@@ -179,6 +186,13 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
    - Ngay lần mở đầu tiên, **∞Sideload** sẽ tự động kiểm tra và cài thêm các Container phụ (**`∞Sideload 1`** và **`∞Sideload 2`**) để nâng tổng số Container lên **`★★★` (3 sao)**.
    - Từ thời điểm này trở đi, **bạn không bao giờ cần dùng đến máy tính nữa!**
 
+> ⚠️ **Quan trọng khi dùng Apple ID miễn phí — Bảng báo `MAXIMUM DEVELOPMENT CERTIFICATES REACHED` (thu hồi `iSideload Windows` / `iSideload macOS`):**
+> - **Vì sao mới cài, còn nhiều App ID mà vẫn báo hết chứng chỉ?** Apple tách riêng hạn mức **10 App ID / 7 ngày & 3 app đang chạy** với giới hạn cứng **tối đa 1 Chứng chỉ phát triển (`Development Certificate`)** cho mỗi Apple ID miễn phí. Lúc cài qua USB, Windows/Mac đã dùng 1 suất đó (`iSideload Windows` / `iSideload macOS`, khóa riêng nằm trên PC), nên lần đầu tự ký trên iPhone/iPad cần **Thu hồi (`Revoke`)** chứng chỉ tạm của máy tính để cấp chứng chỉ nằm ngay trên iPhone/iPad.
+> - **Cách làm an toàn (để bản Chính không mất chữ ký):**
+>   1. **Cách gọn nhất (khuyên dùng):** Bấm **Cancel** ở bảng chứng chỉ → vào tab **Cài đặt (`Settings`) → Gia hạn ∞Sideload (`Renew ∞Sideload`)** → tích chọn **`iSideload Windows`** (hoặc **`iSideload macOS`**) → bấm **Thu hồi và ký tiếp (`Revoke & Continue Signing`)** → xác nhận. App sẽ tạo chứng chỉ của iPhone/iPad, cài đủ **Phụ 1 + Phụ 2** và **tự ký đè lại luôn bản Chính** sang chứng chỉ mới.
+>   2. **Nếu đã bấm `Revoke & Continue Signing` lúc cài Phụ 1:** **đừng vuốt đóng app vội**, hãy vào ngay tab **Cài đặt → Gia hạn ∞Sideload (`Renew ∞Sideload`)** để ký lại bản Chính sang chứng chỉ mới.
+> - **Dùng nhiều máy (iPhone + iPad):** Mỗi thiết bị tự ký độc lập nên dùng **1 Apple ID miễn phí riêng** để không vô tình thu hồi chứng chỉ của máy còn lại.
+
 ---
 
 ### Phương Thức 2: Cài Đặt Từ MacBook / macOS (Qua Cáp USB)
@@ -199,7 +213,7 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
    - Chọn **`1`** (Tiếng Việt) hoặc **`3`** (English) để **Cài mới từ đầu + Tự động ghép đôi**.
    - Chọn **`2`** (Tiếng Việt) hoặc **`4`** (English) nếu chỉ muốn **Sửa file ghép đôi** mà không cần đăng nhập lại Apple ID.
 3. Nhập Apple ID, mật khẩu và mã 2FA.
-4. Giữ iPhone mở khóa để công cụ hoàn tất nạp file Remote Pairing → Tin cậy chứng chỉ trong **Cài đặt → Cài đặt chung → VPN & Quản lý thiết bị** → Bật **LocalDevVPN** và mở **∞Sideload**.
+4. Giữ iPhone mở khóa để công cụ hoàn tất nạp file Remote Pairing → Tin cậy chứng chỉ trong **Cài đặt → Cài đặt chung → VPN & Quản lý thiết bị** → Bật **LocalDevVPN** và mở **∞Sideload**. *(Lần đầu tự ký trên iPhone/iPad nếu thấy bảng báo hết chứng chỉ và hiện `iSideload macOS`, xem hướng dẫn thu hồi an toàn ngay ở ghi chú mục Windows Bước 4 bên trên).*
 
 ---
 

@@ -158,6 +158,11 @@ jobs:
               clang -fobjc-arc -fblocks -framework Foundation -framework JavaScriptCore -framework ImageIO -framework CoreGraphics ios/SIContainerWidget/SIWidgetRuntime.m tests/SIWidgetBridgeTests.m -o /tmp/widget-bridge-tests
               /tmp/widget-bridge-tests
             fi
+            if [[ -f tests/SICUTTypeVirtualizationTests.swift ]]; then
+              clang -c -fobjc-arc -fblocks ios/iContainer/SICUTTypeVirtualization.m -o /tmp/SICUTTypeVirtualization.o
+              swiftc -parse-as-library -import-objc-header ios/iContainer/SICUTTypeVirtualization.h /tmp/SICUTTypeVirtualization.o tests/SICUTTypeVirtualizationTests.swift -framework Foundation -framework UniformTypeIdentifiers -o /tmp/uttype-tests
+              /tmp/uttype-tests
+            fi
             python3 -m venv /tmp/ic-python
             /tmp/ic-python/bin/python -m pip install --quiet pyyaml
             EXPECTED_VERSION=$(/tmp/ic-python/bin/python -c "import yaml; print(yaml.safe_load(open('project-sicontainer.yml'))['targets']['SIContainer']['settings']['base']['MARKETING_VERSION'])")

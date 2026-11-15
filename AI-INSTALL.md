@@ -30,7 +30,7 @@ Windows mở **Cai-iSideload.bat**; macOS mở **Cai-iSideload.command**. Gói �
 5. Apple ID, mật khẩu, 2FA và mật mã iPhone do người dùng nhập trong bộ cài/iPhone. Không yêu cầu dán vào chat, ghi log hoặc commit. Không chia sẻ .p12, pairing record hay cache tài khoản.
 6. Người dùng xử lý Chế độ nhà phát triển, khởi động lại và xác nhận nhà phát triển. Không tự thu hồi chứng chỉ hoặc gỡ app để chữa lỗi.
 7. Giữ cáp đến khi hoàn tất chuyển và xác minh file ghép đôi. Dòng “App đã cài” chưa chứng minh bước ghép đôi đã xong.
-8. Mở ∞Sideload, đăng nhập tài khoản của chủ máy nếu cần tự gia hạn. Giữ Wi-Fi bật, bật LocalDevVPN rồi chọn **Cài đặt → Thiết bị & Ghép đôi → Kiểm tra kết nối thiết bị**.
+8. Mở ∞Sideload, đăng nhập tài khoản của chủ máy nếu cần tự gia hạn. Giữ Wi-Fi bật, bật LocalDevVPN rồi chọn **Cài đặt → Thiết bị & Ghép đôi → Kiểm tra kết nối thiết bị**. Nếu dùng Apple ID miễn phí và lần đầu tự ký hiện bảng báo hết chứng chỉ kèm **`iSideload Windows`** hoặc **`iSideload macOS`** (*Liên quan bản app đang chạy*), giải thích rõ Apple ID miễn phí chỉ có tối đa 1 chứng chỉ phát triển (khác với giới hạn 10 App ID / 3 app) và hướng dẫn người dùng vào **Cài đặt → Gia hạn ∞Sideload** → chọn chứng chỉ đó → **Thu hồi và ký tiếp** (hoặc nếu vừa thu hồi lúc cài Phụ 1 thì chạy ngay **Gia hạn ∞Sideload** trước khi vuốt đóng app để ký lại bản Chính). Nhắc mỗi iPhone/iPad nên dùng 1 Apple ID miễn phí riêng.
 9. Báo riêng kết quả self-test, cài app, ghép đôi USB và kiểm tra LocalDevVPN. Không coi self-test ngoại tuyến là xác nhận cài trên thiết bị thật.
 
 ## Lệnh kiểm tra
