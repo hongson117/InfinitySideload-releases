@@ -1,0 +1,65 @@
+name: Build remote USB support
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Private source commit
+        required: true
+permissions:
+  contents: read
+jobs:
+  support:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            arch: x64
+          - os: macos-15
+            platform: macos
+            arch: arm64
+          - os: macos-15-intel
+            platform: macos
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - name: Validate source
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: '[[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]'
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ matrix.platform }}
+          cache-on-failure: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build native USB CLI
+        shell: bash
+        run: |
+          set -e
+          cargo test --locked --manifest-path ${{ matrix.platform }}/Cargo.toml > /tmp/support-tests.log 2>&1 || { echo 'Private CLI tests failed.'; exit 1; }
+          cargo build --locked --release --manifest-path ${{ matrix.platform }}/Cargo.toml > /tmp/support-build.log 2>&1 || { echo 'Private CLI compilation failed.'; exit 1; }
+      - name: Build helper package
+        shell: bash
+        run: |
+          set -e
+          python -m pip install pyinstaller==6.16.0 -r remote_support/requirements.txt httpx==0.28.1
+          python -m unittest discover -s remote_support -p 'test_*.py' > /tmp/coordinator-tests.log 2>&1 || { echo 'Coordinator tests failed.'; exit 1; }
+          GITHUB_SHA=${{ inputs.source_sha }} python remote_support/package.py ${{ matrix.platform }} ${{ matrix.arch }} > /tmp/helper-package.log 2>&1 || { echo 'Helper packaging failed.'; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ISL-Support-${{ matrix.platform }}-${{ matrix.arch }}
+          path: out/*.zip
+          retention-days: 14
