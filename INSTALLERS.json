@@ -1,19 +1,19 @@
 {
-  "version": "v0.1.0-b1068",
+  "version": "v0.1.0-b1069",
   "app_version": "0.1.0",
-  "app_build": "1068",
+  "app_build": "1069",
   "packages": {
     "windows": {
       "file": "isl-windows.zip",
-      "sha256": "771e2cbd93f5098bb79ff0c78cdfc4360ab835a35d7187314db6d687f0489f7e",
-      "bytes": 22860093,
-      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1068/isl-windows.zip"
+      "sha256": "f47661aca55a36125a8d7ede375f5ac7ccf3b887abb9f4af98b7c81f9cf17772",
+      "bytes": 22869407,
+      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1069/isl-windows.zip"
     },
     "macos": {
       "file": "isl-macos-universal.zip",
-      "sha256": "cafb2564f8f68eec11397caa7dba0c9f2f361da4e95849f4f5d81cb7467248eb",
-      "bytes": 26182041,
-      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1068/isl-macos-universal.zip"
+      "sha256": "9d3592185408af13e07bd3a139c5b16709e715ec4256b858633f9dbb1e15c48d",
+      "bytes": 26191854,
+      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1069/isl-macos-universal.zip"
     }
   },
   "self_update_feed": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json"
