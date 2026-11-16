@@ -4,8 +4,8 @@
 
 | Tải bản mới nhất | Liên kết |
 | :--- | :--- |
-| Bộ cài USB Windows — gói 1068 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
-| Bộ cài USB macOS — gói 1068, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
+| Bộ cài USB Windows — gói 1069 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
+| Bộ cài USB macOS — gói 1069, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
 | Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
 | Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
@@ -45,17 +45,23 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1068`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1069`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp (Release & Mirror) |
 | :--- | :--- | :--- |
-| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1068 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
-| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1068 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
+| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1069 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
+| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1069 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
 | **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1069 (`v0.1.0-b1069`)
+
+- **Sửa lỗi kẹt / đơ màn hình logo X (`com.atebits.Tweetie2` 12.14+ / NeoFreeBird / `BHTwitter`):** Bổ sung lớp ảo hóa `UserNotifications` (`SICUserNotificationsVirtualization`) gỡ cổng chờ quyền thông báo (`NotDetermined -> Denied` & chuẩn hóa callback `requestAuthorizationWithOptions:`), giúp X vượt qua màn hình khởi động mượt mà trong container mà không cần cài lại IPA.
+- **Tương thích sâu `BHTwitter` / `NeoFreeBird` & tự động cách ly dylib bypass sideload xung đột:** Thiết lập môi trường container tương thích cho X (`new_inapp_webview = NO`) và tự động cách ly các dylib bypass sideload liên kết yếu (`zxPluginsInject.dylib`, `sideloadKeychainFix.dylib`) ngay khi khởi động trong khi vẫn bảo toàn `CydiaSubstrate` và `BHTwitter.dylib`.
+- **Hợp nhất lên nhánh chính (`main`) & đồng bộ bộ cài USB:** Hợp nhất toàn bộ cải tiến từ `1066`–`1069` vào nhánh `main` (`66260d1`), đồng bộ bộ cài USB Windows (`isl-windows.zip`) và macOS Universal (`isl-macos-universal.zip`) kèm sẵn `Sideload.ipa` Build 1069.
 
 ### Thay đổi trong build 1068 (`v0.1.0-b1068`)
 

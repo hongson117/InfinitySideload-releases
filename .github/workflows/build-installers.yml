@@ -5,7 +5,7 @@ on:
       source_sha:
         description: Source commit or branch in hongson117/InfinitySideload
         required: false
-        default: 'feat/sicontainer'
+        default: 'main'
       release_tag:
         description: Release tag in hongson117/InfinitySideload-releases to bundle Sideload.ipa from
         required: true
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: hongson117/InfinitySideload
-          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ref: ${{ inputs.source_sha || 'main' }}
           ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
           persist-credentials: false
           show-progress: false
@@ -102,7 +102,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: hongson117/InfinitySideload
-          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ref: ${{ inputs.source_sha || 'main' }}
           ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
           persist-credentials: false
           show-progress: false
