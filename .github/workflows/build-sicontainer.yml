@@ -171,6 +171,12 @@ jobs:
               clang -fobjc-arc -fblocks -framework Foundation ios/iContainer/SICYouTubeHLSBridge.m tests/SICYouTubeHLSBridgeTests.m -o /tmp/yt-hls-bridge-tests
               /tmp/yt-hls-bridge-tests
             fi
+            if [[ -f tests/SICCertBridgeTests.m ]]; then
+              clang -fobjc-arc -fblocks -framework Foundation -framework Security ios/SICCertBridge/SICCertBridge.m tests/SICCertBridgeTests.m -o /tmp/cert-bridge-tests
+              /tmp/cert-bridge-tests
+              SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+              xcrun --sdk iphoneos clang -target arm64-apple-ios17.0 -isysroot "$SDK" -fobjc-arc -fapplication-extension -fsyntax-only ios/SICCertBridge/SICCertBridge.m
+            fi
             python3 -m venv /tmp/ic-python
             /tmp/ic-python/bin/python -m pip install --quiet pyyaml
             EXPECTED_VERSION=$(/tmp/ic-python/bin/python -c "import yaml; print(yaml.safe_load(open('project-sicontainer.yml'))['targets']['SIContainer']['settings']['base']['MARKETING_VERSION'])")
@@ -217,6 +223,16 @@ jobs:
           fi
           test -f "$APP/PlugIns/SIContainerWidget.appex/SIContainerWidget"
           xcrun strip -x "$APP/PlugIns/SIContainerWidget.appex/SIContainerWidget"
+          if [[ -f ios/SICCertBridge/SICCertBridge.m ]]; then
+            CERT_BRIDGE_FW=build/Build/Products/Release-iphoneos/SICCertBridge.framework
+            if [[ -d "$CERT_BRIDGE_FW" && ! -d "$APP/Frameworks/SICCertBridge.framework" ]]; then
+              mkdir -p "$APP/Frameworks"
+              cp -R "$CERT_BRIDGE_FW" "$APP/Frameworks/SICCertBridge.framework"
+            fi
+            test -f "$APP/Frameworks/SICCertBridge.framework/SICCertBridge"
+            rm -rf "$APP/Frameworks/SICCertBridge.framework/Headers" "$APP/Frameworks/SICCertBridge.framework/Modules"
+            xcrun strip -x "$APP/Frameworks/SICCertBridge.framework/SICCertBridge"
+          fi
           /usr/libexec/PlistBuddy -c "Add :ISLGitSHA string ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/PlugIns/SIContainerWidget.appex/Info.plist"
           /usr/libexec/PlistBuddy -c "Set :ISLGitSHA ${SOURCE_SHA:0:7}" "$APP/Info.plist"
           cp publish/SideloadRunner1.ipa "$APP/SideloadRunner1.ipa"
