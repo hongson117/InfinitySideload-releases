@@ -3,10 +3,10 @@
   "apps": {
     "sicontainer": {
       "version": "0.1.0",
-      "build": "1073",
-      "url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1073/Sideload.ipa",
-      "sha256": "a5e910decc953665ec04182f276b8dc0679bf575ae79e9078481eab8ecfdde8b",
-      "bytes": 19048543
+      "build": "1074",
+      "url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1074/Sideload.ipa",
+      "sha256": "73764296bef7f1ff8ce4c94e148a6363fea47dbcf3e10bf48cdd33fb434aadeb",
+      "bytes": 19054754
     }
   }
 }
