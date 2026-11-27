@@ -12,6 +12,7 @@ REPO="hongson117/InfinitySideload-releases"
 TAG="v0.1.0-b1076"
 SHA256="83b015a21e7e769711a3b9abd42191ec20e975216df8f3417fed69bca30721c5"
 SIZE=10109960
+UNSET_MARKER="UNSET_""SHA256"
 
 SOURCES="https://github.com/$REPO/releases/download/$TAG/isl-boot-aarch64
 https://github.com/$REPO/releases/latest/download/isl-boot-aarch64"
@@ -43,20 +44,16 @@ sha_of() {
 
 verify_or_accept() {
   actual="$(sha_of "$1")"
-  case "$SHA256" in
-    83b015a21e7e769711a3b9abd42191ec20e975216df8f3417fed69bca30721c5 | "")
-      [ -s "$1" ] && return 0
-      return 1
-      ;;
-    *)
-      [ "$actual" = "$SHA256" ]
-      ;;
-  esac
+  if [ -z "$SHA256" ] || [ "$SHA256" = "$UNSET_MARKER" ]; then
+    [ -s "$1" ] && return 0
+    return 1
+  fi
+  [ "$actual" = "$SHA256" ]
 }
 
 mkdir -p "$DIR"
 
-if [ -f "$BIN" ] && [ "$SHA256" != "83b015a21e7e769711a3b9abd42191ec20e975216df8f3417fed69bca30721c5" ] && [ "$(sha_of "$BIN")" = "$SHA256" ]; then
+if [ -f "$BIN" ] && [ -n "$SHA256" ] && [ "$SHA256" != "$UNSET_MARKER" ] && [ "$(sha_of "$BIN")" = "$SHA256" ]; then
   say_ok "isl-boot đã ở phiên bản mới nhất ($TAG)"
 else
   got=""
