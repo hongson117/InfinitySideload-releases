@@ -58,6 +58,68 @@ jobs:
             echo 'Core regression tests failed; private diagnostics were not uploaded.'
             exit 1
           fi
+  bootstrap:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - name: Validate build request
+        run: |
+          if [[ -n "$SOURCE_SHA" ]]; then [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; fi
+          if [[ -z "$BUILD_NUMBER" ]]; then BUILD_NUMBER=$((1000 + GITHUB_RUN_NUMBER)); fi
+          [[ "$BUILD_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha || 'feat/sicontainer' }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - name: Install musl toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq musl-tools
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-musl
+      - name: Test and build static isl-boot for Open Minis (aarch64 musl)
+        run: |
+          if [[ ! -f bootstrap/isl-boot/Cargo.toml ]]; then
+            echo "No bootstrap/isl-boot present on this commit; skipping."
+            exit 0
+          fi
+          cargo test --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-tests.log 2>&1 || {
+            grep -E '^error|FAILED' /tmp/isl-boot-tests.log | head -n 25 || true
+            echo 'isl-boot unit tests failed.'
+            exit 1
+          }
+          export CC_aarch64_unknown_linux_musl=musl-gcc
+          export AR_aarch64_unknown_linux_musl=ar
+          export RUSTFLAGS="--remap-path-prefix=${GITHUB_WORKSPACE}=/src --remap-path-prefix=${HOME}/.cargo=/deps/cargo"
+          cargo build --release --target aarch64-unknown-linux-musl --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-build.log 2>&1 || {
+            grep -E '^error' /tmp/isl-boot-build.log | head -n 25 || true
+            echo 'isl-boot musl build failed.'
+            exit 1
+          }
+          mkdir -p publish-boot
+          cp bootstrap/isl-boot/target/aarch64-unknown-linux-musl/release/isl-boot publish-boot/isl-boot-aarch64
+          chmod 755 publish-boot/isl-boot-aarch64
+          ./publish-boot/isl-boot-aarch64 --version
+          ./publish-boot/isl-boot-aarch64 --help >/dev/null
+          tr -d '\r' < bootstrap/install.sh > publish-boot/install.sh.tpl
+      - uses: actions/upload-artifact@v4
+        if: hashFiles('publish-boot/isl-boot-aarch64') != ''
+        with:
+          name: Sideload-public-boot-${{ env.BUILD_NUMBER }}
+          retention-days: 3
+          if-no-files-found: error
+          path: |
+            publish-boot/isl-boot-aarch64
+            publish-boot/install.sh.tpl
   ios:
     runs-on: macos-15-intel
     timeout-minutes: 45
@@ -127,6 +189,10 @@ jobs:
             /tmp/lifecycle-tests
             swiftc -parse-as-library ios/iSideload/Core/PairingRecord.swift tests/PairingRecordTests.swift -o /tmp/pair-tests
             /tmp/pair-tests
+            if [[ -f tests/LoopbackVPNTests.swift ]]; then
+              swiftc -parse-as-library ios/iSideload/Core/LoopbackVPN.swift tests/LoopbackVPNTests.swift -o /tmp/vpn-tests
+              /tmp/vpn-tests
+            fi
             swiftc -parse-as-library ios/iSideload/Core/Models.swift ios/iSideload/Core/LiveContainerSigning.swift tests/LiveContainerSigningTests.swift -o /tmp/lc-tests
             /tmp/lc-tests
             swiftc -parse-as-library ios/iContainer/ContainerGuest.swift tests/ContainerGuestTests.swift -o /tmp/guest-tests
@@ -326,7 +392,7 @@ jobs:
 
   publish:
     if: ${{ inputs.publish_release }}
-    needs: [shortcut-tests, core-tests, ios]
+    needs: [shortcut-tests, core-tests, bootstrap, ios]
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -70,6 +70,26 @@ assets = [
     root / "ThirdPartyNotices.txt",
     root / "BUILD-SOURCE.json",
 ]
+boot_bin = root / "isl-boot-aarch64"
+install_tpl = root / "install.sh.tpl"
+rendered_install_sh = None
+if boot_bin.is_file() and install_tpl.is_file():
+    boot_sha = hashlib.sha256(boot_bin.read_bytes()).hexdigest()
+    boot_size = boot_bin.stat().st_size
+    tpl_text = install_tpl.read_text(encoding="utf-8").replace("\r\n", "\n")
+    rendered_text = (
+        tpl_text.replace("__ISL_RELEASE_TAG__", tag)
+        .replace("__ISL_BOOT_SHA256__", boot_sha)
+        .replace("__ISL_BOOT_SIZE__", str(boot_size))
+    )
+    rendered_install_sh = root / "install.sh"
+    rendered_install_sh.write_bytes(rendered_text.encode("utf-8"))
+    inst_sha = hashlib.sha256(rendered_install_sh.read_bytes()).hexdigest()
+    sums_path = root / "SHA256SUMS.txt"
+    extra_sums = f"{boot_sha}  isl-boot-aarch64\n{inst_sha}  install.sh\n"
+    if boot_sha not in sums_path.read_text(encoding="utf-8"):
+        sums_path.write_text(sums_path.read_text(encoding="utf-8") + extra_sums, encoding="utf-8")
+    assets.extend([boot_bin, rendered_install_sh])
 for extra_zip in ("isl-windows.zip", "isl-macos-universal.zip"):
     extra_path = pathlib.Path(extra_zip)
     if extra_path.exists():
@@ -131,5 +151,31 @@ for attempt in range(3):
         break
 else:
     raise RuntimeError("Release uploaded but update feed requires retry")
+
+if rendered_install_sh is not None and rendered_install_sh.is_file():
+    for attempt in range(3):
+        existing = subprocess.run(
+            ["gh", "api", f"repos/{repo}/contents/install.sh"],
+            capture_output=True,
+            text=True,
+        )
+        req_payload = {
+            "message": f"Update Open Minis bootstrapper install.sh for {tag}",
+            "content": base64.b64encode(rendered_install_sh.read_bytes()).decode(),
+        }
+        if existing.returncode == 0:
+            cur_obj = json.loads(existing.stdout)
+            if base64.b64decode(cur_obj["content"]) == rendered_install_sh.read_bytes():
+                break
+            req_payload["sha"] = cur_obj["sha"]
+        install_req = root / "install-sh-request.json"
+        install_req.write_text(json.dumps(req_payload), encoding="utf-8")
+        put_res = subprocess.run(
+            ["gh", "api", "--method", "PUT", f"repos/{repo}/contents/install.sh", "--input", str(install_req)],
+            capture_output=True,
+            text=True,
+        )
+        if put_res.returncode == 0:
+            break
 
 print(json.dumps({"published": True, "ipa": url, "sha256": sha, "runner1_ipa": r1_url, "runner1_sha256": r1_sha, "runner2_ipa": r2_url, "runner2_sha256": r2_sha}))
