@@ -4,11 +4,13 @@
 
 | Tải bản mới nhất | Liên kết |
 | :--- | :--- |
+| **Cài trực tiếp trên iPhone/iPad không cần PC (iOS 27+ · Open Minis)** | [**Xem hướng dẫn & Prompt nhờ AI chỉ từng bước (`OPEN-MINIS.md`)**](https://github.com/hongson117/InfinitySideload-releases/blob/main/OPEN-MINIS.md) · [`install.sh`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh) |
 | Bộ cài USB Windows — gói 1069 | [Tải `isl-windows.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) |
 | Bộ cài USB macOS — gói 1069, Intel / Apple Silicon | [Tải `isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) |
-| Ứng dụng chính | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
-| Bộ chạy 1 | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
-| Bộ chạy 2 | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
+| Ứng dụng chính (`v0.1.0-b1076`) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
+| Bộ chạy 1 (`v0.1.0-b1076`) | [Tải `SideloadRunner1.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner1.ipa) |
+| Bộ chạy 2 (`v0.1.0-b1076`) | [Tải `SideloadRunner2.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/SideloadRunner2.ipa) |
+| Bộ cài mồi tĩnh cho Open Minis (`aarch64`) | [Tải `isl-boot-aarch64`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-boot-aarch64) |
 
 **Lưu ý về “Source code (zip / tar.gz)” trên GitHub Releases:** GitHub tự tạo hai liên kết này từ nội dung kho phân phối công khai tại tag phát hành. Chúng không phải mã nguồn ứng dụng trong kho Private. Để cài đặt, chọn các gói tải trong bảng trên.
 
@@ -38,24 +40,32 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 | **4. Chế độ Chứng chỉ mua (`.p12` + `.mobileprovision`)** | **Cài đặt OTA trực tiếp**: Tự động ẩn toàn bộ nút/lịch Làm mới 7 ngày và **tuyệt đối không cần mở VPN (`LocalDevVPN`)** khi cài đặt, cập nhật hay quản lý ứng dụng. | SideStore bắt buộc đi qua VPN loopback; muốn cài bằng chứng chỉ mua không VPN phải cài thêm app thứ 3 (ESign / Feather / KSign). |
 | **5. Tự động Hand-off `LocalDevVPN` & Tự chạy tiếp khi Cập nhật** | **Luồng 1 chạm thông minh**: Bấm Cập nhật / Làm mới → Tự kiểm tra `LocalDevVPN`, chưa mở thì tự nhảy sang mở VPN → Tự quay lại `∞Sideload` và **tự chạy tiếp một mạch** cho đến khi hoàn tất → **Tự động tắt VPN** ngay sau khi xong để không ảnh hưởng mạng hay Tailscale. | Phải tự mở app VPN bật trước, tự quay lại app bấm lần 2 mới chạy, và phải tự nhớ tắt VPN thủ công. |
 | **6. Cài Không Dây từ iPhone sang iPhone (`Peer-to-Peer Wi-Fi`)** | **Hoàn toàn không cần dây cáp & không cần máy tính**: Chỉ cần 2 máy iPhone bắt chung Wi-Fi, máy đã có `∞Sideload` sẽ ghép nối không dây (qua mã PIN 6 số), ký và cài thẳng `∞Sideload` kèm sẵn file ghép đôi sang iPhone thứ 2! | Hoàn toàn không có tính năng cài đặt & tạo pairing không dây từ iPhone sang iPhone. |
-| **7. Ghép đôi trực tiếp trên máy (iOS 27+)** | Hỗ trợ **Ghép nối ngay trên thiết bị (`pair_host`)** qua Wi-Fi, bắn thông báo mã PIN 6 số trực tiếp trên màn hình Cài đặt iOS mà không cần máy tính. | Phụ thuộc công cụ `idevice_pair` / `jitterbugpair` trên máy tính. |
+| **7. Cài mới & Ghép đôi 100% không cần PC (iOS 27+ · Open Minis)** | **Chỉ 1 lệnh trong Open Minis (`isl-boot`)**: Tự ghép nối ngay trên iPhone, ký bằng **Apple ID cá nhân** hoặc **Chứng chỉ mua `.p12`** và cài thẳng **∞Sideload** kèm sẵn file ghép đôi ra màn hình chính! | Phải cài qua công cụ trung gian rồi tải/cài rời từng thành phần SideStore + LiveContainer, không hỗ trợ nạp chứng chỉ `.p12` ngay từ bước mồi. |
 | **8. Trình dọn dẹp Slot trực quan khi đầy 3 App** | Quét trực tiếp thiết bị qua `installation_proxy`, hiển thị danh sách các app đang chiếm slot của Apple ID và cho phép bấm **Gỡ & Cài tiếp** ngay trong 1 bảng chọn. | Chỉ báo lỗi chung chung (*Max 3 apps reached*), người dùng phải tự thoát ra màn hình chính tìm xóa mò. |
 | **9. Tạo Icon Màn hình chính & Widget thông minh** | **1 chạm tạo Icon Màn hình chính** (tự động chép Deep Link + Ảnh Icon Base64 và mở thẳng Phím tắt mẫu) kèm **Widget Màn hình chính** hiển thị nhanh các ứng dụng vừa mở, trạng thái `★★★` và hạn ký. | Tạo Shortcut/WebClip thủ công nhiều bước phức tạp. |
 | **10. Song ngữ Việt/Anh (`VI`/`EN`) & AI Crash Diagnostics** | Chuyển đổi **Tiếng Việt / Tiếng Anh** tức thì ngay trên thanh công cụ; tích hợp trình kiểm tra Mach-O & sao chép Crash Log 1 chạm để gửi cho AI hỗ trợ sửa lỗi. | Giao diện tiếng Anh, nhật ký lỗi kỹ thuật rời rạc khó tra cứu. |
 
 ---
 
-## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1069`)
+## 📦 Tải Xuống Bản Phát Hành Mới Nhất (`v0.1.0-b1076`)
 
 > 🔗 **Trang GitHub Công Khai Chính Thức (Public Repo):** <https://github.com/hongson117/InfinitySideload-releases>  
 > *(Lưu ý: Luôn gửi link có hậu tố **`-releases`** ở trên cho người dùng; kho `hongson117/InfinitySideload` không có hậu tố `-releases` là kho mã nguồn nội bộ Private).*
 
 | Gói Tải Về | Mục Đích Sử Dụng | Liên Kết Tải Trực Tiếp (Release & Mirror) |
 | :--- | :--- | :--- |
-| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — kèm sẵn `Sideload.ipa` Build 1069 | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
-| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — kèm sẵn `Sideload.ipa` Build 1069 | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
-| **`Sideload.ipa` (∞Sideload All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
+| **Bộ cài 1 lệnh không cần PC (`install.sh` · `isl-boot-aarch64`)** | Cài mới trực tiếp trên iPhone/iPad (iOS 27+) qua ứng dụng **Open Minis** (hỗ trợ cả Apple ID & Chứng chỉ `.p12`) | [Hướng dẫn & Prompt AI (`OPEN-MINIS.md`)](https://github.com/hongson117/InfinitySideload-releases/blob/main/OPEN-MINIS.md) · [`install.sh`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh) |
+| **Bộ cài USB Windows (`isl-windows.zip`)** | Cài lần đầu & tạo file ghép đôi trên Windows 10/11 (x64) — gói bộ cài 1069 (mở app bấm Cập nhật để lên 1076) | [Tải `isl-windows.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-windows.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-windows.zip) |
+| **Bộ cài USB macOS (`isl-macos-universal.zip`)** | Cài lần đầu & tạo file ghép đôi trên macOS (Apple Silicon & Intel) — gói bộ cài 1069 (mở app bấm Cập nhật để lên 1076) | [Tải `isl-macos-universal.zip` (Chính)](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip) · [Link dự phòng](https://github.com/hongson117/InfinitySideload-releases/raw/main/isl-macos-universal.zip) |
+| **`Sideload.ipa` (`v0.1.0-b1076` All-in-One)** | Gói IPA duy nhất (tự động cài cả **∞Sideload Chính + Phụ 1 + Phụ 2** ngay khi mở ứng dụng) | [Tải `Sideload.ipa`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/Sideload.ipa) |
 | **`app-updates.json`** | Nguồn JSON kiểm tra cập nhật tự động ngay trong ứng dụng | [`app-updates.json`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json) |
+
+### Thay đổi trong build 1076 (`v0.1.0-b1076` · Hợp nhất nhánh `main`)
+
+- **Bộ cài mồi 1 lệnh không cần máy tính trên iOS 27+ (`isl-boot` cho Open Minis):** Cài trực tiếp **∞Sideload** lên iPhone/iPad mới tinh chỉ với 1 dòng lệnh trong ứng dụng **Open Minis** (`1.16+`) kèm **LocalDevVPN**, có giao diện Web tiếng Việt trực quan (`127.0.0.1`), tự ghép nối iOS 27, hỗ trợ ký bằng cả **Apple ID cá nhân** lẫn **Chứng chỉ mua (`.p12` + `.mobileprovision`)** và tự động chép sẵn `pairing.plist` + khóa ký/chứng chỉ vào bên trong ứng dụng.
+- **Nâng cấp Tự ghép nối iOS 27, LocalDevVPN & Liên kết 1-chạm bên trong ứng dụng:** Lưu cố định định danh máy chủ `host_alt_irk` và cặp khóa Ed25519 qua các lần ghép nối lại; giữ tiến trình nền bằng âm thanh tĩnh `mixWithOthers` + thông báo mã PIN 6 số ưu tiên cao (`timeSensitive`); tự chuẩn hóa địa chỉ `LocalDevVPN` (`/32`, `10.7.1.1` → `10.7.0.1`); hỗ trợ liên kết `isideload://install?url=...` để tải IPA 1 chạm vào Container hoặc ký cài trực tiếp.
+- **Khóa cố định ứng dụng Widget theo quyền người dùng & tinh gọn menu (`1075`):** Khi chọn *Ghim cố định làm Widget & đồng bộ ngay*, ứng dụng được đánh dấu ưu tiên cao nhất (`user_selected = YES`), tuyệt đối không bị ghi đè khi mở hoặc chuẩn bị ứng dụng khác; lược bỏ các mục trùng lặp trong menu `⋯`.
+- **Hoàn thiện Ký Chứng Chỉ Mua (`.p12` + 1 file `.mobileprovision`), VPN Extension & Tương thích iOS 27.2 (`1071`–`1074`):** Hỗ trợ chứng chỉ `.p12` mã hóa legacy OpenSSL RC2/3DES kèm gói chỉ có 1 file `.mobileprovision`, hỗ trợ ký cài ứng dụng có `PacketTunnel` VPN Extension (như Shadowrocket), tùy chọn giữ Tweak đi kèm IPA, sửa lỗi văng `BackgroundAssets` trên iOS 27.2 (như *The Piano*) và bổ sung công cụ thu thập Crash Log `.ips` 3 tầng.
 
 ### Thay đổi trong build 1069 (`v0.1.0-b1069`)
 
@@ -95,6 +105,24 @@ Trước đây, để vượt giới hạn **3 ứng dụng** của tài khoản
 
 ## 🤖 Phần 1: Giao Thức Thực Thi Dành Cho AI Agent (AI Execution Playbook)
 
+Tài liệu này hỗ trợ cả **AI trò chuyện hướng dẫn trên điện thoại** (ChatGPT, Gemini, Claude, Grok, AI trong Open Minis) lẫn **AI Agent thực thi trực tiếp trên máy tính** (Codex, Claude Code, Antigravity, Cursor):
+
+### Nhánh 1A — Người dùng không có máy tính (Cài trực tiếp trên iPhone/iPad chạy iOS 27+ qua Open Minis)
+- **Tài liệu chuyên biệt cho AI đọc:** [`OPEN-MINIS.md`](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/OPEN-MINIS.md)
+- **Câu lệnh mẫu để người dùng sao chép gửi cho bất kỳ AI nào (ChatGPT / Gemini / Claude):**
+  ```text
+  Hãy đọc tài liệu tại https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/OPEN-MINIS.md và hướng dẫn tôi cài đặt ∞Sideload trực tiếp trên iPhone/iPad không cần máy tính. Hãy hỏi phiên bản iOS của tôi trước, sau đó chỉ dẫn từng bước một thật ngắn gọn.
+  ```
+- **Quy tắc cho AI khi hướng dẫn Nhánh 1A:**
+  1. Xác nhận máy đang chạy **iOS / iPadOS 27.0+** (nếu iOS `17.4 – 26.x`, giải thích trang *Developer Mode* chưa có mục *Pair with InfinitySideload* và chuyển sang Nhánh 1B dùng cáp USB 1 lần).
+  2. Hướng dẫn tải miễn phí [**Open Minis (1.16+)**](https://apps.apple.com/app/id6759188481) và [**LocalDevVPN**](https://apps.apple.com/app/id6755608044) từ App Store, bật *Chế độ nhà phát triển* và Wi-Fi.
+  3. Mở *Open Minis → Shell Terminal*, chạy đúng lệnh (nhắc giữ đủ đuôi `| sh` ở cuối):
+     ```sh
+     wget -qO- https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh | sh
+     ```
+  4. Trên bảng Web `∞Sideload Bootstrap`: bấm *Bắt đầu ghép nối* (không tắt khung phát âm thanh nền) → vào *Cài đặt › Quyền riêng tư & Bảo mật › Chế độ nhà phát triển › Pair with InfinitySideload* nhập mật mã máy + mã PIN 6 số → bật *LocalDevVPN* → chọn ký bằng **Apple ID** hoặc **Chứng chỉ `.p12`** ngay trên bảng Web cục bộ (AI tuyệt đối không hỏi mật khẩu của người dùng trong khung chat).
+
+### Nhánh 1B — AI Agent chạy trên máy tính của người dùng (Windows hoặc macOS qua cáp USB)
 Nếu bạn là một **AI Agent** đang chạy trên máy tính của người dùng (Windows hoặc macOS) và được yêu cầu *"Cài ∞Sideload vào iPhone cho tôi"* hoặc *"Sửa lỗi ghép đôi / cập nhật ∞Sideload"*, hãy thực hiện chính xác theo quy trình tự động dưới đây:
 
 ### Bước 1. Kiểm tra Hệ điều hành & Môi trường kết nối USB
@@ -162,9 +190,27 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 
 ---
 
-## 💻 Phần 2: Hướng Dẫn Cài Đặt Chi Tiết Cho Người Dùng (3 Phương Thức)
+## 💻 Phần 2: Hướng Dẫn Cài Đặt Chi Tiết Cho Người Dùng (4 Phương Thức)
 
-### Phương Thức 1: Cài Đặt Từ Laptop / PC Windows (Qua Cáp USB)
+### Phương Thức 1 (Mới — Không Cần Máy Tính): Cài Trực Tiếp Ngay Trên iPhone / iPad Qua Open Minis (iOS / iPadOS 27+)
+
+> 💡 **Bạn muốn có AI cầm tay chỉ việc từng bước?** Mở ChatGPT / Gemini / Claude trên điện thoại và dán câu này vào:  
+> `Đọc https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/OPEN-MINIS.md và hướng dẫn tôi cài ∞Sideload từng bước một.`  
+> *(Xem bản hướng dẫn đầy đủ & bảng xử lý lỗi tại [**`OPEN-MINIS.md`**](OPEN-MINIS.md)).*
+
+1. **Chuẩn bị (iOS / iPadOS 27.0+):** Bật **Chế độ nhà phát triển** (*Cài đặt → Quyền riêng tư & Bảo mật → Chế độ nhà phát triển*), bật **Wi-Fi** (tạm tắt VPN), rồi tải miễn phí 2 ứng dụng trên App Store: [**Open Minis (1.16+)**](https://apps.apple.com/app/id6759188481) và [**LocalDevVPN**](https://apps.apple.com/app/id6755608044).
+2. **Chạy 1 lệnh duy nhất trong Open Minis:** Mở **Open Minis** → bấm biểu tượng **Terminal (`>_`)** góc trên phải → chọn **Shell Terminal**, dán đầy đủ dòng lệnh sau (có cả `| sh` ở cuối) rồi nhấn **Enter**:
+   ```sh
+   wget -qO- https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh | sh
+   ```
+3. **Tự ghép nối ngay trên máy:** Trên bảng giao diện **∞Sideload Bootstrap** bật lên (nếu lỡ vuốt đóng thì nhấn `Enter` trong Terminal để mở lại):
+   - Bấm **Bắt đầu ghép nối** (để nguyên khung phát âm thanh nhỏ chạy nền).
+   - Mở **Cài đặt → Quyền riêng tư & Bảo mật → Chế độ nhà phát triển** → kéo xuống dưới cùng chạm vào **`Ghép nối với InfinitySideload`** (`Pair with InfinitySideload`) → nhập mật mã khóa máy và **mã PIN 6 chữ số** hiện trên thông báo.
+4. **Bật LocalDevVPN & Ký cài đặt:** Quay lại Open Minis bấm **Mở LocalDevVPN** → bật **Connect** → quay lại bấm **Tiếp tục**, sau đó chọn **Apple ID cá nhân** (7 ngày / 1 năm) hoặc **Chứng chỉ mua (`.p12` + `.mobileprovision`)** để cài thẳng **∞Sideload** kèm sẵn file ghép nối ra màn hình chính!
+
+---
+
+### Phương Thức 2: Cài Đặt Từ Laptop / PC Windows (Qua Cáp USB — Mọi bản iOS 17.4+ & iOS 27)
 
 #### Bước 1: Chuẩn bị trên Windows
 1. Cài đặt **Apple Devices** (từ Microsoft Store) hoặc **iTunes** bản chính thức từ trang chủ Apple để máy tính có đầy đủ Driver USB và dịch vụ `Apple Mobile Device Service`.
@@ -201,7 +247,7 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 
 ---
 
-### Phương Thức 2: Cài Đặt Từ MacBook / macOS (Qua Cáp USB)
+### Phương Thức 3: Cài Đặt Từ MacBook / macOS (Qua Cáp USB — Mọi bản iOS 17.4+ & iOS 27)
 
 #### Bước 1: Chuẩn bị trên macOS (Hỗ trợ cả chip Apple Silicon M1–M4 & Intel)
 1. Tải gói **[`isl-macos-universal.zip`](https://github.com/hongson117/InfinitySideload-releases/releases/latest/download/isl-macos-universal.zip)** và giải nén ra thư mục `Downloads` (sẽ tạo ra thư mục `iSideload-macOS`).
@@ -223,7 +269,7 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 
 ---
 
-### Phương Thức 3: Cài Đặt Từ Một iPhone Khác Đã Có Sẵn ∞Sideload (Peer-to-Peer Wi-Fi — Không Cần Máy Tính)
+### Phương Thức 4: Cài Đặt Từ Một iPhone Khác Đã Có Sẵn ∞Sideload (Peer-to-Peer Wi-Fi — Không Cần Máy Tính)
 
 Nếu bạn (hoặc người thân/bạn bè) đã có một chiếc iPhone cài sẵn **∞Sideload** (gọi là **Máy hỗ trợ**), bạn có thể cài **∞Sideload** sang chiếc iPhone thứ hai (gọi là **Máy nhận**, chạy iOS/iPadOS 27 trở lên) chỉ bằng mạng Wi-Fi chung mà **không cần bất kỳ máy tính nào**:
 
@@ -355,8 +401,9 @@ Nếu bạn muốn **khóa cố định** một ứng dụng quan trọng trong 
    - Khi bạn nhập và chuẩn bị một ứng dụng có chứa tiện ích mở rộng Widget, dưới tên ứng dụng sẽ tự động xuất hiện nhãn:  
      *`⊞ Hỗ trợ Widget (chọn ⋯ để đặt làm Widget)`*.
    - *(Ngay khi bạn bấm **Chuẩn bị** một ứng dụng có hỗ trợ Widget, ∞Sideload cũng tự động kích hoạt ứng dụng đó làm Widget mặc định).*
-2. **Chuyển đổi ứng dụng hiển thị trên Widget:**
-   - Nếu bạn có nhiều ứng dụng hỗ trợ Widget, bấm vào nút **`⋯`** của ứng dụng muốn hiển thị → chọn **Đặt làm Widget & đồng bộ ngay** (ứng dụng đang được chọn sẽ hiện nhãn màu xanh *`⊞ Đang hiển thị trên Widget ∞Sideload`*).
+2. **Ghim cố định ứng dụng hiển thị trên Widget (Quyền ưu tiên cao nhất):**
+   - Bấm vào nút **`⋯`** của ứng dụng bạn muốn hiển thị → chọn **Ghim cố định làm Widget & đồng bộ ngay** (ứng dụng được ghim sẽ hiện nhãn *`📌 Đã ghim cố định trên Widget ∞Sideload`*).
+   - Lựa chọn ghim của bạn có quyền ưu tiên cao nhất: việc mở, sử dụng hay chuẩn bị bất kỳ ứng dụng nào khác trong Container sẽ **không bao giờ tự động thay thế** Widget bạn đã chọn.
    - Bạn cũng có thể bấm **`⋯` → Đồng bộ lại Widget ngay** bất cứ lúc nào để làm mới dữ liệu tức thì.
 3. **Đưa Widget ra Màn hình chính iPhone:**
    - Ra ngoài Màn hình chính của iPhone → nhấn giữ vào vùng trống cho đến khi các biểu tượng rung nhẹ.

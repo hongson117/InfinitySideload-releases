@@ -1,6 +1,22 @@
-# Hỗ trợ cài ∞Sideload trên Windows và macOS
+# Hỗ trợ cài ∞Sideload (Open Minis không cần PC · Windows · macOS)
 
 Kho phân phối chính thức: [hongson117/InfinitySideload-releases](https://github.com/hongson117/InfinitySideload-releases).
+
+## 1. Nếu người dùng KHÔNG có máy tính (iPhone / iPad chạy iOS 27.0+)
+
+Đọc và làm theo đúng giao thức từng bước trong **[OPEN-MINIS.md](OPEN-MINIS.md)**:
+
+- **Điều kiện bắt buộc:** Thiết bị chạy **iOS / iPadOS 27.0 trở lên** (để có mục `Pair with InfinitySideload` cuối trang *Developer Mode*). Nếu máy đang ở **iOS 17.4 – 26.x** (ví dụ `18.6.2`), giải thích rõ Apple chưa mở tự ghép nối trên bản đó và chuyển sang mục 2 (Cáp USB Windows/macOS) bên dưới.
+- **Ứng dụng miễn phí trên App Store:** [Open Minis (1.16+)](https://apps.apple.com/app/id6759188481) và [LocalDevVPN](https://apps.apple.com/app/id6755608044).
+- **Lệnh chạy trong Shell Terminal của Open Minis** (nhắc người dùng sao chép đủ cả đuôi `| sh`):
+  ```sh
+  wget -qO- https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh | sh
+  ```
+- **Bảo mật:** Mật khẩu Apple ID, mã 2FA và mật khẩu `.p12` chỉ được nhập trực tiếp trên giao diện cục bộ (`127.0.0.1`) của `isl-boot` trong Open Minis — tuyệt đối không yêu cầu người dùng dán vào khung chat.
+
+---
+
+## 2. Cài qua cáp USB trên Windows và macOS (Mọi bản iOS 17.4+ & iOS 27)
 
 Phiên bản app và checksum bộ cài đang phát hành được ghi trong [INSTALLERS.json](INSTALLERS.json). Trong mỗi ZIP, `BUILD-SOURCE.json` xác định app đóng kèm và `INSTALLER-BUILD.json` ghi nguồn bộ cài, phiên bản app và SHA-256 của IPA. Phiên bản CLI hiển thị bởi `--version` có thể khác phiên bản app iPhone.
 

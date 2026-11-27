@@ -2,7 +2,7 @@
 
 Áp dụng khi người dùng yêu cầu cài hoặc sửa ghép đôi ∞Sideload từ repo này. Đây là repo phân phối binary và tài liệu; mã nguồn app ở repo private. Nếu chỉ sửa tài liệu, không tự chạy bộ cài.
 
-1. Đọc `README.md`, `AI-INSTALL.md`, `INSTALLERS.json`, rồi `WINDOWS.md` hoặc `MACOS.md` đúng hệ điều hành.
+1. Đọc `README.md`, `OPEN-MINIS.md`, `AI-INSTALL.md`, `INSTALLERS.json`, rồi `WINDOWS.md` hoặc `MACOS.md` đúng hệ điều hành. Nếu người dùng không có máy tính và thiết bị chạy **iOS/iPadOS 27.0+**, ưu tiên hướng dẫn quy trình 1 lệnh trên **Open Minis** theo `OPEN-MINIS.md` (kiểm tra kỹ đuôi `| sh` của lệnh `wget` và không bao giờ hỏi mật khẩu/2FA trong chat). Nếu thiết bị chạy **iOS 17.4 – 26.x**, giải thích chưa hỗ trợ tự ghép nối trên máy và hướng dẫn dùng bộ cài USB Windows/macOS.
 2. Xác minh công cụ đang thao tác trên máy Windows/Mac thật của người dùng. Không coi hệ điều hành của cloud/sandbox là hệ điều hành máy đang cắm iPhone. Nếu không có quyền thao tác local, cung cấp bước cho người dùng làm; không tuyên bố đã cài từ cloud.
 3. Gói public được phép tải: `isl-windows.zip`, `isl-macos-universal.zip`, và metadata/checksum trong repo hoặc URL GitHub Releases của đúng phiên bản. Dùng SHA-256 trong `INSTALLERS.json` để kiểm tra ZIP trước khi chạy. Không bỏ qua checksum lỗi.
 4. Giải nén toàn bộ vào thư mục mới. Windows dùng `Cai-iSideload.bat`; Mac dùng `Cai-iSideload.command`. Mở Terminal/console tương tác để người dùng thấy và nhập trực tiếp.

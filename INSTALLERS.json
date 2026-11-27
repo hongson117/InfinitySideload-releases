@@ -14,7 +14,21 @@
       "sha256": "9d3592185408af13e07bd3a139c5b16709e715ec4256b858633f9dbb1e15c48d",
       "bytes": 26191854,
       "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1069/isl-macos-universal.zip"
+    },
+    "open_minis": {
+      "min_ios": "27.0",
+      "script": "install.sh",
+      "script_sha256": "75504d138d16d41d0ddc688c5ac7a46ffd39a7d36c343cb392044636759754d0",
+      "script_bytes": 2846,
+      "script_url": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/install.sh",
+      "binary": "isl-boot-aarch64",
+      "binary_sha256": "83b015a21e7e769711a3b9abd42191ec20e975216df8f3417fed69bca30721c5",
+      "binary_bytes": 10109960,
+      "release_url": "https://github.com/hongson117/InfinitySideload-releases/releases/download/v0.1.0-b1076/isl-boot-aarch64",
+      "guide_url": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/OPEN-MINIS.md"
     }
   },
-  "self_update_feed": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json"
+  "self_update_feed": "https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/app-updates.json",
+  "latest_app_release": "v0.1.0-b1076",
+  "latest_app_build": "1076"
 }
