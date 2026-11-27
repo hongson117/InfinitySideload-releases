@@ -92,16 +92,17 @@ jobs:
             echo "No bootstrap/isl-boot present on this commit; skipping."
             exit 0
           fi
-          cargo test --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-tests.log 2>&1 || {
-            grep -E '^error|FAILED' /tmp/isl-boot-tests.log | head -n 25 || true
+          export CARGO_TERM_COLOR=never
+          cargo test --locked --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-tests.log 2>&1 || {
+            tail -n 35 /tmp/isl-boot-tests.log || true
             echo 'isl-boot unit tests failed.'
             exit 1
           }
           export CC_aarch64_unknown_linux_musl=musl-gcc
           export AR_aarch64_unknown_linux_musl=ar
           export RUSTFLAGS="--remap-path-prefix=${GITHUB_WORKSPACE}=/src --remap-path-prefix=${HOME}/.cargo=/deps/cargo"
-          cargo build --release --target aarch64-unknown-linux-musl --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-build.log 2>&1 || {
-            grep -E '^error' /tmp/isl-boot-build.log | head -n 25 || true
+          cargo build --locked --release --target aarch64-unknown-linux-musl --manifest-path bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-build.log 2>&1 || {
+            tail -n 35 /tmp/isl-boot-build.log || true
             echo 'isl-boot musl build failed.'
             exit 1
           }
