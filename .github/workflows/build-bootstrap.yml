@@ -1,0 +1,131 @@
+name: Build Open Minis Bootstrapper
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Approved private source commit (40 hex characters)
+        required: true
+      release_tag:
+        description: Existing release tag to update (e.g. v0.1.0-b1076)
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-bootstrap-build
+  cancel-in-progress: false
+
+jobs:
+  bootstrap-publish:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Validate inputs
+        run: |
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-b[0-9]+$ ]]
+      - uses: actions/checkout@v4
+        with:
+          repository: hongson117/InfinitySideload
+          ref: ${{ inputs.source_sha }}
+          ssh-key: ${{ secrets.ICONTAINER_SOURCE_READ_KEY }}
+          path: src
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - name: Install musl toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq musl-tools
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-musl
+      - name: Test, build, and publish isl-boot-aarch64 + install.sh
+        run: |
+          export CARGO_TERM_COLOR=never
+          cargo test --locked --manifest-path src/bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-tests.log 2>&1 || {
+            tail -n 35 /tmp/isl-boot-tests.log || true
+            exit 1
+          }
+          export CC_aarch64_unknown_linux_musl=musl-gcc
+          export AR_aarch64_unknown_linux_musl=ar
+          export RUSTFLAGS="--remap-path-prefix=${GITHUB_WORKSPACE}/src=/src --remap-path-prefix=${HOME}/.cargo=/deps/cargo"
+          cargo build --locked --release --target aarch64-unknown-linux-musl --manifest-path src/bootstrap/isl-boot/Cargo.toml >/tmp/isl-boot-build.log 2>&1 || {
+            tail -n 35 /tmp/isl-boot-build.log || true
+            exit 1
+          }
+          mkdir -p out-boot
+          cp src/bootstrap/isl-boot/target/aarch64-unknown-linux-musl/release/isl-boot out-boot/isl-boot-aarch64
+          chmod 755 out-boot/isl-boot-aarch64
+          ./out-boot/isl-boot-aarch64 --version
+          ./out-boot/isl-boot-aarch64 --help >/dev/null
+          tr -d '\r' < src/bootstrap/install.sh > out-boot/install.sh.tpl
+
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          tag = os.environ["RELEASE_TAG"]
+          out = pathlib.Path("out-boot")
+          boot_bin = out / "isl-boot-aarch64"
+          tpl = (out / "install.sh.tpl").read_text(encoding="utf-8").replace("\r\n", "\n")
+
+          boot_sha = hashlib.sha256(boot_bin.read_bytes()).hexdigest()
+          boot_size = boot_bin.stat().st_size
+          rendered = (
+              tpl.replace("__ISL_RELEASE_TAG__", tag)
+              .replace("__ISL_BOOT_SHA256__", boot_sha)
+              .replace("__ISL_BOOT_SIZE__", str(boot_size))
+          )
+          install_sh = out / "install.sh"
+          install_sh.write_bytes(rendered.encode("utf-8"))
+          inst_sha = hashlib.sha256(install_sh.read_bytes()).hexdigest()
+
+          subprocess.run(
+              ["gh", "release", "download", tag, "-R", repo, "-p", "SHA256SUMS.txt", "-D", str(out), "--clobber"],
+              check=True,
+          )
+          sums_path = out / "SHA256SUMS.txt"
+          kept_lines = [
+              ln for ln in sums_path.read_text(encoding="utf-8").splitlines()
+              if ln.strip() and not ln.strip().endswith(("isl-boot-aarch64", "install.sh"))
+          ]
+          kept_lines.append(f"{boot_sha}  isl-boot-aarch64")
+          kept_lines.append(f"{inst_sha}  install.sh")
+          sums_path.write_bytes(("\n".join(kept_lines) + "\n").encode("utf-8"))
+
+          subprocess.run(
+              ["gh", "release", "upload", tag, str(boot_bin), str(install_sh), str(sums_path), "-R", repo, "--clobber"],
+              check=True,
+          )
+
+          for _ in range(3):
+              existing = subprocess.run(["gh", "api", f"repos/{repo}/contents/install.sh"], capture_output=True, text=True)
+              payload = {
+                  "message": f"Update Open Minis bootstrapper install.sh for {tag} ({boot_sha[:12]})",
+                  "content": base64.b64encode(install_sh.read_bytes()).decode(),
+              }
+              if existing.returncode == 0:
+                  cur = json.loads(existing.stdout)
+                  if base64.b64decode(cur["content"]) == install_sh.read_bytes():
+                      break
+                  payload["sha"] = cur["sha"]
+              req_file = out / "put-install.json"
+              req_file.write_text(json.dumps(payload), encoding="utf-8")
+              put = subprocess.run(
+                  ["gh", "api", "--method", "PUT", f"repos/{repo}/contents/install.sh", "--input", str(req_file)],
+                  capture_output=True,
+                  text=True,
+              )
+              if put.returncode == 0:
+                  break
+          else:
+              raise RuntimeError("Failed to update install.sh on main")
+
+          print(json.dumps({"tag": tag, "isl_boot_sha256": boot_sha, "install_sh_sha256": inst_sha}))
+          PY
