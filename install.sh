@@ -9,9 +9,9 @@
 set -eu
 
 REPO="hongson117/InfinitySideload-releases"
-TAG="v0.1.0-b1076"
-SHA256="83b015a21e7e769711a3b9abd42191ec20e975216df8f3417fed69bca30721c5"
-SIZE=10109960
+TAG="v0.1.0-b1077"
+SHA256="5405e388ee45612a9d0f94665ad1d0f3237d1ac73ba375fc99c8cf69e9372efc"
+SIZE=10175504
 UNSET_MARKER="UNSET_""SHA256"
 
 SOURCES="https://github.com/$REPO/releases/download/$TAG/isl-boot-aarch64
