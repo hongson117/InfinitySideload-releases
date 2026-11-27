@@ -194,6 +194,8 @@ Nếu bạn là một **AI Agent** đang chạy trên máy tính của người 
 
 ### Phương Thức 1 (Mới — Không Cần Máy Tính): Cài Trực Tiếp Ngay Trên iPhone / iPad Qua Open Minis (iOS / iPadOS 27+)
 
+![Hướng dẫn cài đặt ∞Sideload 1 lệnh qua Open Minis](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/assets/open-minis-install.jpg)
+
 > 💡 **Bạn muốn có AI cầm tay chỉ việc từng bước?** Mở ChatGPT / Gemini / Claude trên điện thoại và dán câu này vào:  
 > `Đọc https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/OPEN-MINIS.md và hướng dẫn tôi cài ∞Sideload từng bước một.`  
 > *(Xem bản hướng dẫn đầy đủ & bảng xử lý lỗi tại [**`OPEN-MINIS.md`**](OPEN-MINIS.md)).*

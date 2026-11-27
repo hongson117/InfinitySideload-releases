@@ -3,6 +3,8 @@
 > **Kho phân phối công khai chính thức:** <https://github.com/hongson117/InfinitySideload-releases>  
 > Tài liệu này được thiết kế chuẩn **AI-Guided Playbook** để bất kỳ người dùng nào cũng có thể **tự cài đặt trong 3 phút** hoặc **sao chép đường dẫn này gửi cho AI (ChatGPT, Gemini, Claude, Grok, Perplexity, hoặc AI tích hợp ngay trong Open Minis)** để được hướng dẫn cầm tay chỉ việc từng bước.
 
+![Hướng dẫn cài đặt ∞Sideload trực tiếp trên iPhone/iPad qua Open Minis](https://raw.githubusercontent.com/hongson117/InfinitySideload-releases/main/assets/open-minis-install.jpg)
+
 ---
 
 ## 🤖 Cách Nhờ AI Hướng Dẫn Từng Bước (Dành Cho Người Dùng)
